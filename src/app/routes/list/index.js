@@ -37,9 +37,9 @@ export default () => (
                 <td>Table Data</td>
                 <td>
                   <ul className="uk-iconnav uk-flex-right">
-                    <li><a href="/" uk-icon="icon: info"></a></li>
-                    <li><a href="/" uk-icon="icon: file-edit"></a></li>
-                    <li><a href="/" uk-icon="icon: trash"></a></li>
+                    <li><a href="/" uk-icon="icon: info">icon</a></li>
+                    <li><a href="/" uk-icon="icon: file-edit">icon</a></li>
+                    <li><a href="/" uk-icon="icon: trash">icon</a></li>
                   </ul>
                 </td>
               </tr>

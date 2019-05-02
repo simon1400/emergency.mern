@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import AuthenticatedRoute from '../components/authenticated-route';
-import UnauthenticatedRoute from '../components/unauthenticated-route';
+// import AuthenticatedRoute from '../components/authenticated-route';
+// import UnauthenticatedRoute from '../components/unauthenticated-route';
 import Loadable from 'react-loadable';
 
 import NotFound from './not-found';

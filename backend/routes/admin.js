@@ -28,7 +28,7 @@ questionsRoutes.route("/create").post(function(req, res) {
   question
     .save()
     .then(question => {
-      res.status(200).json({ question: "question added successfully" });
+      res.status(200).json({ question: "question added successfully", data: question });
     })
     .catch(err => {
       res.status(400).send(err);
