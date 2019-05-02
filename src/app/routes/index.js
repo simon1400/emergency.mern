@@ -83,6 +83,9 @@ const Create = Loadable({
 });
 
 export default class Routes extends Component {
+
+
+
   render() {
     return(
       <Switch>
@@ -97,13 +100,6 @@ export default class Routes extends Component {
 
         <Route exact path="/login" component={Create} />
 
-
-        {/* <Route exact path="/about" component={About} /> */}
-        {/* <Route exact path="/profile/:id" component={Profile} /> */}
-        {/* <AuthenticatedRoute exact path="/dashboard" component={Dashboard} /> */}
-
-        {/* <UnauthenticatedRoute exact path="/login" component={Login} />
-        <AuthenticatedRoute exact path="/logout" component={Logout} /> */}
 
         <Route component={NotFound} />
       </Switch>
