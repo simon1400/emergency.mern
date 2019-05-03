@@ -1,7 +1,8 @@
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
+import axios from "axios";
 
-export const AUTHENTICATE = 'auth/AUTHENTICATE';
-export const SET_CURRENT_USER = 'auth/SET_CURRENT_USER';
+export const AUTHENTICATE = "auth/AUTHENTICATE";
+export const SET_CURRENT_USER = "auth/SET_CURRENT_USER";
 
 const initialState = {
   isAuthenticated: false,
@@ -34,7 +35,7 @@ export const setCurrentUser = user => dispatch =>
       user
     });
 
-    Cookies.set('mywebsite', user);
+    Cookies.set("user", user);
 
     dispatch({
       type: AUTHENTICATE,
@@ -46,7 +47,7 @@ export const setCurrentUser = user => dispatch =>
 
 export const establishCurrentUser = () => dispatch =>
   new Promise(resolve => {
-    let userFromCookie = Cookies.getJSON('mywebsite');
+    let userFromCookie = Cookies.getJSON("user");
 
     if (userFromCookie) {
       dispatch(setCurrentUser(userFromCookie));
@@ -56,17 +57,20 @@ export const establishCurrentUser = () => dispatch =>
     }
   });
 
-export const loginUser = (email, password) => dispatch =>
-  new Promise((resolve, reject) => {
-    const user = {
-      email,
-      password,
-      name: 'Awesome User'
-    };
-
-    dispatch(setCurrentUser(user));
-    resolve(user);
-  });
+export const loginUser = (email, password) => dispatch => {
+  return axios
+    .get("http://localhost:4000/admin/user/login/" + email + "/" + password)
+    .then(res => {
+      console.log(res);
+      dispatch(setCurrentUser(res.data));
+    });
+  // return new Promise((resolve, reject) => {
+  //   const user = {
+  //     email,
+  //     password,
+  //     name: 'Awesome User'
+  //   };
+};
 
 export const logoutUser = () => dispatch =>
   new Promise(resolve => {
@@ -80,6 +84,6 @@ export const logoutUser = () => dispatch =>
       user: {}
     });
 
-    Cookies.remove('mywebsite');
+    Cookies.remove("user");
     resolve({});
   });

@@ -1,49 +1,176 @@
-import React from 'react';
-import Page from '../../components/page';
+import React, { Component } from "react";
+import Page from "../../components/page";
+import axios from "axios";
 
-export default () => (
-  <Page id="homepage">
-    <div className="uk-container">
-			<div className="uk-grid uk-child-width-1-1" uk-grid="">
-				<form className="uk-form-stacked">
+import Tests from "./tests";
 
-			    <div className="uk-margin">
-		        <label className="uk-form-label" htmlFor="form-stacked-text">Text</label>
-		        <div className="uk-form-controls">
-		            <input className="uk-input uk-form-width-large" id="form-stacked-text" type="text" placeholder="Some text..." />
-		        </div>
-			    </div>
+export default class Create extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: "",
+      surname: "",
+      rodneCislo: "",
+      password: "",
+      typeUser: "",
+      selectTest: []
+    };
+  }
 
-					<div className="uk-margin">
-						<label className="uk-form-label" htmlFor="form-stacked-text">Text</label>
-						<div className="uk-form-controls">
-		          <input className="uk-input uk-form-width-large" type="text" placeholder="Large" />
-		        </div>
-			    </div>
+  componentDidMount() {
+    if (this.props.match.params.id) {
+      this.loadData(this.props.match.params.id);
+    } else {
+      this.setState({
+        typeUser: this.props.match.params.typeUser
+      });
+    }
+  }
 
-					<div className="uk-margin">
-						<label className="uk-form-label" htmlFor="form-stacked-text">Text</label>
-						<div className="uk-form-controls">
-		          <input className="uk-input uk-form-width-large" type="text" placeholder="Large" />
-		        </div>
-			    </div>
+  loadData = id => {
+    axios.get("http://localhost:4000/admin/user/" + id).then(res =>
+      this.setState(
+        {
+          name: res.data.name,
+          surname: res.data.surname,
+          rodneCislo: res.data.rodneCislo,
+          password: res.data.password,
+          typeUser: res.data.typeUser,
+          selectTest: res.data.selectTest
+        },
+        () => console.log(this.state)
+      )
+    );
+  };
 
-					<div className="uk-margin">
-						<label className="uk-form-label" htmlFor="form-stacked-text">Text</label>
-						<div className="uk-form-controls">
-		          <input className="uk-input uk-form-width-large" type="text" placeholder="Large" />
-		        </div>
-			    </div>
+  handleChange = e => {
+    this.setState({ [e.target.name]: e.target.value }, () =>
+      console.log(this.state)
+    );
+  };
 
-					<div className="uk-margin uk-grid-small uk-child-width-1-1 uk-grid">
-	          <label><input className="uk-checkbox" type="checkbox" checked="checked" /> Test 1</label>
-					<label><input className="uk-checkbox" type="checkbox" /> Test 2</label>
-	        </div>
+  handleChangeArray = e => {
+    let tests = this.state.selectTest;
+    tests.push(e.target.name);
+    this.setState(
+      {
+        selectTest: tests
+      },
+      () => console.log(this.state)
+    );
+  };
 
-					<button className="uk-button uk-button-primary">Ulozit</button>
+  onSubmit = e => {
+    e.preventDefault();
+    if (this.props.match.params.id) {
+      axios
+        .post(
+          "http://localhost:4000/admin/user/update/" +
+            this.props.match.params.id,
+          this.state
+        )
+        .then(res => {
+          window.location.href = "/list/all/" + this.state.typeUser;
+        });
+    } else {
+      axios
+        .post("http://localhost:4000/admin/user/create", this.state)
+        .then(res => {
+          window.location.href = "/list/all/" + this.state.typeUser;
+        });
+    }
+  };
 
-				</form>
-			</div>
-		</div>
-  </Page>
-);
+  render() {
+    return (
+      <Page id="homepage">
+        <div className="uk-container uk-container-xsmall">
+          <div className="uk-grid uk-child-width-1-1" uk-grid="">
+            <form className="uk-form-stacked">
+              <div className="uk-margin">
+                <label className="uk-form-label" htmlFor="form-stacked-text">
+                  Jmeno
+                </label>
+                <div className="uk-form-controls">
+                  <input
+                    className="uk-input "
+                    value={this.state.name}
+                    id="form-stacked-text"
+                    name="name"
+                    onChange={this.handleChange}
+                    type="text"
+                    placeholder="Jmeno"
+                  />
+                </div>
+              </div>
+
+              <div className="uk-margin">
+                <label className="uk-form-label" htmlFor="form-stacked-text">
+                  Prijmeni
+                </label>
+                <div className="uk-form-controls">
+                  <input
+                    className="uk-input "
+                    value={this.state.surname}
+                    type="text"
+                    name="surname"
+                    onChange={this.handleChange}
+                    placeholder="Prijmeni"
+                  />
+                </div>
+              </div>
+
+              <div className="uk-margin">
+                <label className="uk-form-label" htmlFor="form-stacked-text">
+                  Rodne cislo
+                </label>
+                <div className="uk-form-controls">
+                  <input
+                    className="uk-input "
+                    value={this.state.rodneCislo}
+                    type="text"
+                    name="rodneCislo"
+                    onChange={this.handleChange}
+                    placeholder="Rodne cislo"
+                  />
+                </div>
+              </div>
+
+              <div className="uk-margin">
+                <label className="uk-form-label" htmlFor="form-stacked-text">
+                  Heslo
+                </label>
+                <div className="uk-form-controls">
+                  <input
+                    className="uk-input "
+                    value={this.state.password}
+                    type="text"
+                    name="password"
+                    onChange={this.handleChange}
+                    placeholder="Heslo"
+                  />
+                </div>
+              </div>
+
+              {this.state.typeUser === "pacient" ? (
+                <Tests
+                  tests={this.state.selectTest}
+                  changeCheckbox={this.handleChangeArray}
+                />
+              ) : (
+                ""
+              )}
+
+              <button
+                className="uk-button uk-button-primary"
+                onClick={this.onSubmit}
+              >
+                Ulozit
+              </button>
+            </form>
+          </div>
+        </div>
+      </Page>
+    );
+  }
+}

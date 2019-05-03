@@ -3,22 +3,22 @@ const questionsRoutes = express.Router();
 let Questions = require("../models/question.model");
 
 questionsRoutes.route("/").get(function(req, res) {
-  Questions.find(function(err, todos) {
+  Questions.find(function(err, data) {
     if (err) {
       console.log(err);
     } else {
-      res.json(todos);
+      res.json(data);
     }
   });
 });
 
 questionsRoutes.route("/:id").get(function(req, res) {
   let id = req.params.id;
-  Questions.findById(id, function(err, todos) {
+  Questions.findById(id, function(err, data) {
     if (err) {
       console.log(err);
     } else {
-      res.json(todos);
+      res.json(data);
     }
   });
 });
@@ -28,30 +28,41 @@ questionsRoutes.route("/create").post(function(req, res) {
   question
     .save()
     .then(question => {
-      res.status(200).json({ question: "question added successfully", data: question });
+      res
+        .status(200)
+        .json({ question: "question added successfully", data: question });
     })
     .catch(err => {
       res.status(400).send(err);
     });
 });
 
-// questionsRoutes.route('/update/:id').post(function(req, res) {
-//     Questions.findById(req.params.id, function(err, todo) {
-//         if (!todo)
-//             res.status(404).send("data is not found");
-//         else
-//             todo.todo_description = req.body.todo_description;
-//             todo.todo_responsible = req.body.todo_responsible;
-//             todo.todo_priority = req.body.todo_priority;
-//             todo.todo_completed = req.body.todo_completed;
-//
-//             todo.save().then(todo => {
-//                 res.json('Questions updated!');
-//             })
-//             .catch(err => {
-//                 res.status(400).send("Update not possible");
-//             });
-//     });
-// });
+questionsRoutes.route("/delete/:id").delete(function(req, res) {
+  let id = req.params.id;
+  Questions.remove({ _id: id }, function(err, data) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+questionsRoutes.route("/update/:id").post(function(req, res) {
+  Questions.findById(req.params.id, function(err, question) {
+    if (!question) res.status(404).send("data is not found");
+    else question.nameTest = req.body.nameTest;
+    question.questions = req.body.questions;
+
+    question
+      .save()
+      .then(question => {
+        res.json("Questions updated!");
+      })
+      .catch(err => {
+        res.status(400).send("Update not possible");
+      });
+  });
+});
 
 module.exports = questionsRoutes;

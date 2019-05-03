@@ -1,0 +1,38 @@
+.uk-iconnav li {
+  position: relative;
+}
+
+.uk-iconnav li button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  border: none;
+  z-index: 100;
+}
+
+.uk-modal-close-default:hover:before {
+  display: none;
+}
+
+.uk-modal-close-default:hover svg {
+  fill: red;
+}
+
+.uk-modal-close-default:hover polyline {
+  stroke: red !important;
+}
+
+.tm-modal {
+  display: flex;
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.tm-modal .uk-modal-dialog {
+  opacity: 1;
+  margin: auto;
+  transform: translateY(0);
+}

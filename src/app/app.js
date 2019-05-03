@@ -1,18 +1,18 @@
 // The basics
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { withRouter } from "react-router";
 
 // Action creators and helpers
-import { establishCurrentUser } from '../modules/auth';
-import { isServer } from '../store';
+import { establishCurrentUser } from "../modules/auth";
+import { isServer } from "../store";
 
-import Header from './header';
-import Routes from './routes';
+import Header from "./header";
+import Routes from "./routes";
 
-import './app.css';
-import 'uikit';
+import "./app.css";
+import "uikit";
 // import '/node_modules/uikit/dist/js/ukit-icons.js';
 
 class App extends Component {
@@ -23,11 +23,13 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.props);
     return (
       <div id="app">
         <Header
           isAuthenticated={this.props.isAuthenticated}
           current={this.props.location.pathname}
+          user={this.props.user}
         />
         <Routes />
       </div>
@@ -36,7 +38,8 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated
+  isAuthenticated: state.auth.isAuthenticated,
+  state: state
 });
 
 const mapDispatchToProps = dispatch =>

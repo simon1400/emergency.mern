@@ -1,27 +1,31 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const links = [
   {
-    to: '/',
-    text: 'Homepage'
+    to: "/",
+    text: "Homepage"
   },
   {
-    to: '/tests/user',
-    text: 'Tests'
+    to: "/tests/admin",
+    text: "Tests"
   },
   {
-    to: '/results/user',
-    text: 'results'
+    to: "/results/user",
+    text: "results"
   },
-  // {
-  //   to: '/about',
-  //   text: 'About'
-  // },
-  // {
-  //   to: '/profile/1',
-  //   text: 'Profile 1'
-  // },
+  {
+    to: "/add/doctor",
+    text: "addUser"
+  },
+  {
+    to: "/create",
+    text: "Create test"
+  },
+  {
+    to: "/list/all/doctor",
+    text: "Lists users"
+  }
   // {
   //   to: '/profile/2',
   //   text: 'Profile 2'
@@ -48,9 +52,9 @@ const links = [
 ];
 
 const isCurrent = (to, current) => {
-  if (to === '/' && current === to) {
+  if (to === "/" && current === to) {
     return true;
-  } else if (to !== '/' && current.includes(to)) {
+  } else if (to !== "/" && current.includes(to)) {
     return true;
   }
 
@@ -58,44 +62,55 @@ const isCurrent = (to, current) => {
 };
 
 const HeaderLink = ({ to, text, current }) => (
-  <li className={isCurrent(to, current) ? 'current' : ''}>
+  <li className={isCurrent(to, current) ? "current" : ""}>
     <Link to={to}>{text}</Link>
   </li>
 );
 
-export default ({ isAuthenticated, current }) => (
+export default ({ isAuthenticated, current, user }) => (
   <header className="uk-section-primary uk-preserve-color uk-margin-bottom">
+    <div className="uk-navbar-container uk-container" uk-navbar="">
+      <div className="uk-navbar-left ">
+        <a className="uk-navbar-item uk-logo uk-preserve-color" href="/">
+          Dotaznik
+        </a>
 
-			<div className="uk-navbar-container uk-container" uk-navbar="">
-				<div className="uk-navbar-left ">
+        <ul className="uk-navbar-nav">
+          {links.map((link, index) => {
+            const TheLink = (
+              <HeaderLink key={index} current={current} {...link} />
+            );
 
-					<a className="uk-navbar-item uk-logo uk-preserve-color" href="/">Dotaznik</a>
-
-					<ul className="uk-navbar-nav">
-            {links.map((link, index) => {
-              const TheLink = <HeaderLink key={index} current={current} {...link} />;
-
-              if (link.hasOwnProperty('auth')) {
-                if (link.auth && isAuthenticated) {
-                  return TheLink;
-                } else if (!link.auth && !isAuthenticated) {
-                  return TheLink;
-                }
-
-                return null;
+            if (link.hasOwnProperty("auth")) {
+              if (link.auth && isAuthenticated) {
+                return TheLink;
+              } else if (!link.auth && !isAuthenticated) {
+                return TheLink;
               }
 
-              return TheLink;
-            })}
-		      </ul>
+              return null;
+            }
 
-				</div>
-				<div className="uk-navbar-right">
-					<ul className="uk-navbar-nav">
-		        <li><a href="/"><span className="uk-icon uk-margin-small-right" uk-icon="icon: user"></span>Dmytro Pechunka</a></li>
-          <li><a href="/">Sing In</a></li>
-		      </ul>
-				</div>
-		</div>
-	</header>
+            return TheLink;
+          })}
+        </ul>
+      </div>
+      <div className="uk-navbar-right">
+        <ul className="uk-navbar-nav">
+          <li>
+            <a href="/">
+              <span
+                className="uk-icon uk-margin-small-right"
+                uk-icon="icon: user"
+              />{" "}
+              Pechunka
+            </a>
+          </li>
+          <li>
+            <a href="/">Sing In</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
 );

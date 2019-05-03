@@ -1,15 +1,15 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Route, Redirect } from 'react-router-dom';
+import React from "react";
+import { connect } from "react-redux";
+import { Route, Redirect } from "react-router-dom";
 
-const AuthenticatedRoute = ({ component: Component, ...rest }) => (
+const AdminRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
       rest.isAuthenticated ? (
         <Component {...props} />
       ) : (
-        <Redirect to={`/login?redirect=${props.location.pathname}`} />
+        <Redirect to={`/login`} />
       )
     }
   />
@@ -22,4 +22,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   null
-)(AuthenticatedRoute);
+)(AdminRoute);

@@ -1,108 +1,80 @@
-import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
-// import AuthenticatedRoute from '../components/authenticated-route';
-// import UnauthenticatedRoute from '../components/unauthenticated-route';
-import Loadable from 'react-loadable';
+import React, { Component } from "react";
+import { Route, Switch } from "react-router-dom";
+import AdminRoute from "../components/authenticated-route";
+import UnauthenticatedRoute from "../components/unauthenticated-route";
+import Loadable from "react-loadable";
 
-import NotFound from './not-found';
+import NotFound from "./not-found";
 
 const Homepage = Loadable({
-  loader: () => import(/* webpackChunkName: "homepage" */ './homepage'),
+  loader: () => import(/* webpackChunkName: "homepage" */ "./homepage"),
   loading: () => null,
-  modules: ['homepage']
+  modules: ["homepage"]
 });
 
-// const About = Loadable({
-//   loader: () => import(/* webpackChunkName: "about" */ './about'),
-//   loading: () => null,
-//   modules: ['about']
-// });
-//
-// const Dashboard = Loadable({
-//   loader: () => import(/* webpackChunkName: "dashboard" */ './dashboard'),
-//   loading: () => null,
-//   modules: ['dashboard']
-// });
-
-// const Login = Loadable({
-//   loader: () => import(/* webpackChunkName: "login" */ './login'),
-//   loading: () => null,
-//   modules: ['login']
-// });
-//
-// const Logout = Loadable({
-//   loader: () => import(/* webpackChunkName: "logout" */ './logout'),
-//   loading: () => null,
-//   modules: ['logout']
-// });
-
-// const Profile = Loadable({
-//   loader: () => import(/* webpackChunkName: "profile" */ './profile'),
-//   loading: () => null,
-//   modules: ['profile']
-// });
-
+const Login = Loadable({
+  loader: () => import(/* webpackChunkName: "login" */ "./login"),
+  loading: () => null,
+  modules: ["login"]
+});
 
 // SElf ROUTES --------------------------------------------------------
 // SElf ROUTES --------------------------------------------------------
 
 const Tests = Loadable({
-  loader: () => import(/* webpackChunkName: "profile" */ './tests'),
+  loader: () => import(/* webpackChunkName: "profile" */ "./tests"),
   loading: () => null,
-  modules: ['tests']
+  modules: ["tests"]
 });
 
 const Results = Loadable({
-  loader: () => import(/* webpackChunkName: "profile" */ './results'),
+  loader: () => import(/* webpackChunkName: "profile" */ "./results"),
   loading: () => null,
-  modules: ['results']
+  modules: ["results"]
 });
 
 const List = Loadable({
-  loader: () => import(/* webpackChunkName: "profile" */ './list'),
+  loader: () => import(/* webpackChunkName: "profile" */ "./list"),
   loading: () => null,
-  modules: ['list']
+  modules: ["list"]
 });
 
 const Add = Loadable({
-  loader: () => import(/* webpackChunkName: "profile" */ './add-user'),
+  loader: () => import(/* webpackChunkName: "profile" */ "./add-user"),
   loading: () => null,
-  modules: ['add-user']
+  modules: ["add-user"]
 });
 
 const Test = Loadable({
-  loader: () => import(/* webpackChunkName: "profile" */ './test-full'),
+  loader: () => import(/* webpackChunkName: "profile" */ "./test-full"),
   loading: () => null,
-  modules: ['test-full']
+  modules: ["test-full"]
 });
 
 const Create = Loadable({
-  loader: () => import(/* webpackChunkName: "profile" */ './create'),
+  loader: () => import(/* webpackChunkName: "profile" */ "./create"),
   loading: () => null,
-  modules: ['create']
+  modules: ["create"]
 });
 
 export default class Routes extends Component {
-
-
-
   render() {
-    return(
+    return (
       <Switch>
+        <AdminRoute exact path="/" component={Homepage} />
+        <AdminRoute exact path="/tests/:user" component={Tests} />
+        <AdminRoute exact path="/results/:user" component={Results} />
+        <AdminRoute exact path="/list/all/:user" component={List} />
+        <AdminRoute exact path="/add/:typeUser" component={Add} />
+        <AdminRoute exact path="/user/edit/:id" component={Add} />
+        <AdminRoute exact path="/tests/:user/:id" component={Test} />
+        <AdminRoute exact path="/create/:id" component={Create} />
+        <AdminRoute exact path="/create" component={Create} />
 
-        <Route exact path="/" component={Homepage} />
-        <Route exact path="/tests/:user" component={Tests} />
-        <Route exact path="/results/:user" component={Results} />
-        <Route exact path="/list/:user" component={List} />
-        <Route exact path="/add" component={Add} />
-        <Route exact path="/tests/:user/:id" component={Test} />
-        <Route exact path="/create" component={Create} />
-
-        <Route exact path="/login" component={Create} />
-
+        <UnauthenticatedRoute exact path="/login" component={Login} />
 
         <Route component={NotFound} />
       </Switch>
-    )
+    );
   }
-};
+}
