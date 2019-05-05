@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
-import AdminRoute from "../components/authenticated-route";
+import AuthentticatedRoute from "../components/authenticated-route";
+import AdminRoute from "../components/admin-route";
+import DoctorRoute from "../components/doctor-route";
 import UnauthenticatedRoute from "../components/unauthenticated-route";
 import Loadable from "react-loadable";
 
@@ -61,15 +63,57 @@ export default class Routes extends Component {
   render() {
     return (
       <Switch>
-        <AdminRoute exact path="/" component={Homepage} />
-        <AdminRoute exact path="/tests/:user" component={Tests} />
-        <AdminRoute exact path="/results/:user" component={Results} />
-        <AdminRoute exact path="/list/all/:user" component={List} />
-        <AdminRoute exact path="/add/:typeUser" component={Add} />
-        <AdminRoute exact path="/user/edit/:id" component={Add} />
-        <AdminRoute exact path="/tests/:user/:id" component={Test} />
-        <AdminRoute exact path="/create/:id" component={Create} />
-        <AdminRoute exact path="/create" component={Create} />
+        <AuthentticatedRoute
+          exact
+          path="/"
+          component={Homepage}
+          typeUser={this.props.typeUser}
+        />
+        <AuthentticatedRoute exact path="/tests/:user" component={Tests} />
+        <AuthentticatedRoute
+          exact
+          path="/tests/pacient/:id"
+          component={Test}
+          typeUser={this.props.typeUser}
+        />
+        <AuthentticatedRoute
+          exact
+          path="/results/pacient"
+          component={Results}
+          typeUser={this.props.typeUser}
+        />
+
+        <DoctorRoute
+          exact
+          path="/list/all/:user"
+          component={List}
+          typeUser={this.props.typeUser}
+        />
+        <DoctorRoute
+          exact
+          path="/add/:typeUser"
+          component={Add}
+          typeUser={this.props.typeUser}
+        />
+        <DoctorRoute
+          exact
+          path="/user/edit/:id"
+          component={Add}
+          typeUser={this.props.typeUser}
+        />
+
+        <AdminRoute
+          exact
+          path="/create/:id"
+          component={Create}
+          typeUser={this.props.typeUser}
+        />
+        <AdminRoute
+          exact
+          path="/create"
+          component={Create}
+          typeUser={this.props.typeUser}
+        />
 
         <UnauthenticatedRoute exact path="/login" component={Login} />
 

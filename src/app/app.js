@@ -3,9 +3,11 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withRouter } from "react-router";
+import { frontloadConnect } from "react-frontload";
 
 // Action creators and helpers
 import { establishCurrentUser } from "../modules/auth";
+import { getCurrentProfile } from "../modules/profile";
 import { isServer } from "../store";
 
 import Header from "./header";
@@ -13,7 +15,10 @@ import Routes from "./routes";
 
 import "./app.css";
 import "uikit";
-// import '/node_modules/uikit/dist/js/ukit-icons.js';
+
+const frontload = async props => {
+  return await props.getCurrentProfile();
+};
 
 class App extends Component {
   componentWillMount() {
@@ -23,15 +28,13 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.props);
     return (
       <div id="app">
         <Header
           isAuthenticated={this.props.isAuthenticated}
-          current={this.props.location.pathname}
-          user={this.props.user}
+          user={this.props.currentProfile}
         />
-        <Routes />
+        <Routes typeUser={this.props.currentProfile.typeUser} />
       </div>
     );
   }
@@ -39,15 +42,20 @@ class App extends Component {
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
-  state: state
+  currentProfile: state.profile.currentProfile
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ establishCurrentUser }, dispatch);
+  bindActionCreators({ establishCurrentUser, getCurrentProfile }, dispatch);
 
 export default withRouter(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(App)
+  )(
+    frontloadConnect(frontload, {
+      onMount: true,
+      onUpdate: false
+    })(App)
+  )
 );

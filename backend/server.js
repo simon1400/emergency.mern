@@ -7,6 +7,7 @@ const PORT = 4000;
 
 const questionsRoutes = require("./routes/admin");
 const userRoutes = require("./routes/user");
+const resultRoutes = require("./routes/result");
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -23,6 +24,7 @@ connection.once("open", function() {
 
 app.use("/admin/test", questionsRoutes);
 app.use("/admin/user", userRoutes);
+app.use("/result/", resultRoutes);
 
 app.listen(PORT, function() {
   console.log("Server is running on Port: " + PORT);

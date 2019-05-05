@@ -1,5 +1,4 @@
-// import pekka from '../app/assets/pekka.jpg';
-// import arvidsson from '../app/assets/arvidsson.jpg';
+import Cookies from "js-cookie";
 
 export const SET_CURRENT_PROFILE = "auth/SET_CURRENT_PROFILE";
 
@@ -22,21 +21,19 @@ export default (state = initialState, action) => {
 
 export const getCurrentProfile = id => dispatch =>
   new Promise(resolve => {
-    setTimeout(() => {
-      let profile;
+    let profile;
+    let userFromCookie = Cookies.getJSON("user");
 
-      profile = {
-        id,
-        name: "Pekka Rinne"
-      };
+    profile = {
+      ...userFromCookie
+    };
 
-      dispatch({
-        type: SET_CURRENT_PROFILE,
-        profile
-      });
+    dispatch({
+      type: SET_CURRENT_PROFILE,
+      profile
+    });
 
-      resolve(profile);
-    }, 3000);
+    resolve(profile);
   });
 
 export const removeCurrentProfile = () => dispatch =>

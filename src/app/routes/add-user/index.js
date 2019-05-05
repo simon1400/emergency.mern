@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Page from "../../components/page";
 import axios from "axios";
+import { withRouter } from "react-router";
+import Cookies from "js-cookie";
 
 import Tests from "./tests";
 
@@ -13,6 +15,7 @@ export default class Create extends Component {
       rodneCislo: "",
       password: "",
       typeUser: "",
+      parrentDoctor: "",
       selectTest: []
     };
   }
@@ -25,39 +28,62 @@ export default class Create extends Component {
         typeUser: this.props.match.params.typeUser
       });
     }
+
+    if (this.props.match.params.typeUser === "pacient") {
+      let currentUser = Cookies.getJSON("user");
+      console.log(currentUser._id);
+      this.setState(
+        {
+          parrentDoctor: currentUser._id
+        },
+        () => console.log(this.state)
+      );
+    }
   }
 
   loadData = id => {
     axios.get("http://localhost:4000/admin/user/" + id).then(res =>
-      this.setState(
-        {
-          name: res.data.name,
-          surname: res.data.surname,
-          rodneCislo: res.data.rodneCislo,
-          password: res.data.password,
-          typeUser: res.data.typeUser,
-          selectTest: res.data.selectTest
-        },
-        () => console.log(this.state)
-      )
+      this.setState({
+        name: res.data.name,
+        surname: res.data.surname,
+        rodneCislo: res.data.rodneCislo,
+        password: res.data.password,
+        typeUser: res.data.typeUser,
+        selectTest: res.data.selectTest
+      })
     );
   };
 
+  // loadTests = e => {
+  //   axios.get("http://localhost:4000/admin/test").then(res => {
+  //     var tests = [];
+  //     res.data.map(item => (
+  //       tests.push(item._id)
+  //     ))
+  //
+  //     this.setState(
+  //       {
+  //         tests: tests,
+  //         typeUser: this.props.match.params.typeUser
+  //       }, () => console.log(this.state)
+  //     )
+  //   })
+  // }
+
   handleChange = e => {
-    this.setState({ [e.target.name]: e.target.value }, () =>
-      console.log(this.state)
-    );
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   handleChangeArray = e => {
     let tests = this.state.selectTest;
-    tests.push(e.target.name);
-    this.setState(
-      {
-        selectTest: tests
-      },
-      () => console.log(this.state)
-    );
+    if (tests.indexOf(e.target.name) != -1) {
+      tests.splice(tests.indexOf(e.target.name), 1);
+    } else {
+      tests.push(e.target.name);
+    }
+    this.setState({
+      selectTest: tests
+    });
   };
 
   onSubmit = e => {

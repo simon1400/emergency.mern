@@ -61,15 +61,8 @@ export const loginUser = (email, password) => dispatch => {
   return axios
     .get("http://localhost:4000/admin/user/login/" + email + "/" + password)
     .then(res => {
-      console.log(res);
       dispatch(setCurrentUser(res.data));
     });
-  // return new Promise((resolve, reject) => {
-  //   const user = {
-  //     email,
-  //     password,
-  //     name: 'Awesome User'
-  //   };
 };
 
 export const logoutUser = () => dispatch =>

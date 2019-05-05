@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Page from "../../components/page";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export default class Create extends Component {
   constructor(props) {
@@ -13,31 +14,38 @@ export default class Create extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.match.params.user);
+    let currentUser = Cookies.getJSON("user");
     axios
       .get(
         "http://localhost:4000/admin/user/all/" + this.props.match.params.user
       )
       .then(res => {
-        this.setState({
-          users: res.data
-        });
+        if (this.props.match.params.user === "pacient") {
+          this.setState({
+            users: res.data.filter(
+              item => item.parrentDoctor == currentUser._id
+            )
+          });
+        } else {
+          this.setState({
+            users: res.data
+          });
+        }
       });
   }
 
   onDelete = e => {
     e.preventDefault();
+
     let users = this.state.users;
     for (var i = 0; i < users.length; i++) {
-      console.log(users[i]._id);
       if (users[i]._id === e.target.name) users.splice(i, 1);
     }
-    this.setState(
-      {
-        users: users
-      },
-      () => console.log(this.state)
-    );
+
+    this.setState({
+      users: users
+    });
+
     axios.delete("http://localhost:4000/admin/user/delete/" + e.target.name);
   };
 
@@ -84,12 +92,12 @@ export default class Create extends Component {
               </div>
             </div>
             <div className="uk-width-1-5">
-              <button
+              <Link
                 className="uk-button uk-button-primary uk-width-1-1 tm-equal-height"
-                onClick={() => (window.location.href = "/add/doctor")}
+                to={`/add/${this.props.match.params.user}`}
               >
                 Pridat {this.props.match.params.user}a
-              </button>
+              </Link>
             </div>
           </div>
         </div>

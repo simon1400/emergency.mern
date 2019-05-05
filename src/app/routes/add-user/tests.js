@@ -5,16 +5,15 @@ export default class Create extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tests: []
+      tests: [],
+      checked: []
     };
   }
 
   componentDidMount() {
     axios.get("http://localhost:4000/admin/test").then(res => {
       let tests = [];
-      res.data.map(item =>
-        tests.push({ name: item.nameQuestion, _id: item._id })
-      );
+      res.data.map(item => tests.push({ name: item.nameTest, _id: item._id }));
       this.setState({
         tests
       });
@@ -29,12 +28,23 @@ export default class Create extends Component {
             key={index}
             className="uk-margin-small-bottom uk-display-block"
           >
-            <input
-              className="uk-checkbox"
-              type="checkbox"
-              name={item._id}
-              onClick={this.props.changeCheckbox}
-            />{" "}
+            {this.props.tests.indexOf(item._id) != -1 ? (
+              <input
+                className="uk-checkbox"
+                type="checkbox"
+                name={item._id}
+                onClick={this.props.changeCheckbox}
+                checked="checked"
+              />
+            ) : (
+              <input
+                className="uk-checkbox"
+                type="checkbox"
+                name={item._id}
+                onClick={this.props.changeCheckbox}
+              />
+            )}
+
             {item.name}
           </label>
         ))}

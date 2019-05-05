@@ -7,6 +7,7 @@ let User = new Schema({
   rodneCislo: String,
   password: String,
   typeUser: String,
+  parrentDoctor: String,
   selectTest: [String]
 });
 

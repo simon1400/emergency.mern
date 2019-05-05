@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Page from "../../components/page";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export default class Create extends Component {
   constructor(props) {
@@ -14,12 +15,25 @@ export default class Create extends Component {
   componentDidMount() {
     if (this.props.match.params.user === "admin") {
       axios.get("http://localhost:4000/admin/test").then(res => {
-        this.setState(
-          {
-            tests: res.data
-          },
-          () => console.log(this.state.tests)
-        );
+        this.setState({
+          tests: res.data
+        });
+      });
+    } else if (this.props.match.params.user === "pacient") {
+      let currentUser = Cookies.getJSON("user");
+      var currentTests = [];
+      axios.get("http://localhost:4000/admin/test").then(res => {
+        currentUser.selectTest.map(selectItem => {
+          res.data.map(testItem => {
+            if (selectItem === testItem._id) {
+              currentTests.push(testItem);
+            }
+          });
+        });
+
+        this.setState({
+          tests: currentTests
+        });
       });
     }
   }
@@ -44,6 +58,7 @@ export default class Create extends Component {
 
   render() {
     var tests = this.state.tests;
+    var typeUser = this.props.match.params.user;
     return (
       <Page id="homepage">
         <div className="uk-container">
@@ -55,20 +70,26 @@ export default class Create extends Component {
               ? tests.map((item, index) => (
                   <div key={index} className="uk-margin-bottom">
                     <Link
-                      to={`/create/${item._id}`}
+                      to={`${typeUser === "pacient" ? "pacient/" : "/create/"}${
+                        item._id
+                      }`}
                       className="uk-card uk-card-default uk-card-hover uk-card-body uk-display-block uk-link-reset"
                     >
                       <h3 className="uk-card-title uk-text-center uk-margin-remove-bottom">
                         {item.nameTest}
                       </h3>
-                      <button
-                        onClick={this.onDelete}
-                        name={item._id}
-                        className="uk-modal-close-default uk-button uk-button-text"
-                        type="button"
-                      >
-                        <span uk-icon="icon: trash" />
-                      </button>
+                      {typeUser !== "pacient" ? (
+                        <button
+                          onClick={this.onDelete}
+                          name={item._id}
+                          className="uk-modal-close-default uk-button uk-button-text"
+                          type="button"
+                        >
+                          <span uk-icon="icon: trash" />
+                        </button>
+                      ) : (
+                        false
+                      )}
                     </Link>
                   </div>
                 ))
