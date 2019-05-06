@@ -35,6 +35,12 @@ const Results = Loadable({
   modules: ["results"]
 });
 
+const ResultsView = Loadable({
+  loader: () => import(/* webpackChunkName: "profile" */ "./results-view"),
+  loading: () => null,
+  modules: ["results-view"]
+});
+
 const List = Loadable({
   loader: () => import(/* webpackChunkName: "profile" */ "./list"),
   loading: () => null,
@@ -63,57 +69,26 @@ export default class Routes extends Component {
   render() {
     return (
       <Switch>
-        <AuthentticatedRoute
-          exact
-          path="/"
-          component={Homepage}
-          typeUser={this.props.typeUser}
-        />
+        <AuthentticatedRoute exact path="/" component={Homepage} />
         <AuthentticatedRoute exact path="/tests/:user" component={Tests} />
-        <AuthentticatedRoute
-          exact
-          path="/tests/pacient/:id"
-          component={Test}
-          typeUser={this.props.typeUser}
-        />
+        <AuthentticatedRoute exact path="/tests/pacient/:id" component={Test} />
         <AuthentticatedRoute
           exact
           path="/results/pacient"
           component={Results}
-          typeUser={this.props.typeUser}
+        />
+        <AuthentticatedRoute
+          exact
+          path="/view/results/:id"
+          component={ResultsView}
         />
 
-        <DoctorRoute
-          exact
-          path="/list/all/:user"
-          component={List}
-          typeUser={this.props.typeUser}
-        />
-        <DoctorRoute
-          exact
-          path="/add/:typeUser"
-          component={Add}
-          typeUser={this.props.typeUser}
-        />
-        <DoctorRoute
-          exact
-          path="/user/edit/:id"
-          component={Add}
-          typeUser={this.props.typeUser}
-        />
+        <DoctorRoute exact path="/list/all/:user" component={List} />
+        <DoctorRoute exact path="/add/:typeUser" component={Add} />
+        <DoctorRoute exact path="/user/edit/:id" component={Add} />
 
-        <AdminRoute
-          exact
-          path="/create/:id"
-          component={Create}
-          typeUser={this.props.typeUser}
-        />
-        <AdminRoute
-          exact
-          path="/create"
-          component={Create}
-          typeUser={this.props.typeUser}
-        />
+        <AdminRoute exact path="/create/:id" component={Create} />
+        <AdminRoute exact path="/create" component={Create} />
 
         <UnauthenticatedRoute exact path="/login" component={Login} />
 

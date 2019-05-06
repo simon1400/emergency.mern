@@ -21,22 +21,30 @@ export default class TestFull extends Component {
 
   componentDidMount() {
     let currentUser = Cookies.getJSON("user");
-    this.setState({
-      userId: currentUser._id
-    });
+
     axios
       .get("http://localhost:4000/admin/test/" + this.props.match.params.id)
       .then(res => {
         this.setState({
           test: res.data
         });
-      })
-      .then(() =>
-        axios
-          .get("http://localhost:4000/result/" + this.props.match.params.id)
-          .then(res => {
-            var data = res.data[0];
-            if (!data.done) {
+      });
+    axios
+      .get("http://localhost:4000/result/all/" + this.props.match.params.id)
+      .then(res => {
+        if (res.data) {
+          this.setState({
+            userId: currentUser._id,
+            resultId: "",
+            currentAsk: 0,
+            answers: [],
+            checkedName: "",
+            checkedBody: "",
+            date: "",
+            done: false
+          });
+          res.data.map(data => {
+            if (!data.done && data.userId === currentUser._id) {
               this.setState({
                 resultId: data._id,
                 currentAsk: data.currentAsk,
@@ -44,20 +52,35 @@ export default class TestFull extends Component {
                 answers: data.answers
               });
             }
-          })
-          .then(() => console.log(this.state))
-      );
+          });
+        }
+      });
   }
 
   updateAnswers = e => {
     var answers = this.state.answers;
-
+    var index;
     var answer = {
       nameAsk: this.state.test.questions[this.state.currentAsk].nameQuestion,
       checkedValue: this.state.checkedName,
       checkedBody: this.state.checkedBody
     };
-    answers.push(answer);
+    if (
+      answers.find(
+        x =>
+          x.nameAsk ===
+          this.state.test.questions[this.state.currentAsk].nameQuestion
+      )
+    ) {
+      index = answers.findIndex(
+        x =>
+          x.nameAsk ===
+          this.state.test.questions[this.state.currentAsk].nameQuestion
+      );
+      answers[index] = answer;
+    } else {
+      answers.push(answer);
+    }
 
     var now = new Date();
     var date =
@@ -71,11 +94,18 @@ export default class TestFull extends Component {
       ":" +
       now.getMinutes();
 
-    this.setState({
-      currentAsk: this.state.currentAsk + 1,
-      answers: answers,
-      date: date
-    });
+    if (e === "next") {
+      this.setState({
+        currentAsk: this.state.currentAsk + 1,
+        answers: answers,
+        date: date
+      });
+    } else {
+      this.setState({
+        answers: answers,
+        date: date
+      });
+    }
   };
 
   onPrev = e => {
@@ -85,10 +115,11 @@ export default class TestFull extends Component {
   };
 
   onNext = async e => {
-    await this.updateAnswers();
+    await this.updateAnswers("next");
 
     var data = {
       idTest: this.state.test._id,
+      nameTest: this.state.test.nameTest,
       currentAsk: this.state.currentAsk,
       answers: this.state.answers,
       date: this.state.date,
@@ -96,31 +127,66 @@ export default class TestFull extends Component {
       userId: this.state.userId
     };
 
-    if (this.state.resultId) {
-      axios.post(
-        "http://localhost:4000/result/update/" + this.state.resultId,
-        data
-      );
-    } else {
-      axios.post("http://localhost:4000/result/create", data);
+    if (this.state.currentAsk <= 1 && !this.state.resultId) {
+      await axios
+        .post("http://localhost:4000/result/create/", data)
+        .then(res => console.log("create data next!"));
+    }
+
+    if (this.state.currentAsk && this.state.resultId) {
+      await axios
+        .get("http://localhost:4000/result/" + this.state.resultId)
+        .then(res => {
+          var data = res.data[0];
+          if (data && !data.done) {
+            this.setState({
+              resultId: data._id,
+              currentAsk: data.currentAsk,
+              idTest: data.idTest,
+              answers: data.answers
+            });
+          }
+        })
+        .then(() => {
+          axios.post(
+            "http://localhost:4000/result/update/" + this.state.resultId,
+            data
+          );
+        });
     }
   };
 
   onFinish = async () => {
-    await this.updateAnswers();
+    await this.updateAnswers("finish");
 
     var data = {
       idTest: this.state.test._id,
+      nameTest: this.state.test.nameTest,
       currentAsk: this.state.currentAsk,
       answers: this.state.answers,
       date: this.state.date,
-      done: true
+      done: true,
+      userId: this.state.userId
     };
 
-    axios
-      .post("http://localhost:4000/result/update/" + this.state.resultId, data)
+    await axios
+      .get("http://localhost:4000/result/all/" + this.props.match.params.id)
       .then(res => {
-        window.location.href = "/";
+        if (res.data) {
+          res.data.map(item => {
+            if (!item.done && data.userId === item.userId) {
+              this.setState({
+                resultId: item._id,
+                currentAsk: item.currentAsk,
+                idTest: item.idTest,
+                answers: item.answers
+              });
+              axios
+                .post("http://localhost:4000/result/update/" + item._id, data)
+                .then(() => (window.location.href = "/results/pacient"));
+            }
+          });
+        }
       });
   };
 
