@@ -28,7 +28,7 @@ export default class Create extends Component {
             key={index}
             className="uk-margin-small-bottom uk-display-block"
           >
-            {this.props.tests.indexOf(item._id) != -1 ? (
+            {this.props.tests.indexOf(item._id) !== -1 ? (
               <input
                 className="uk-checkbox"
                 type="checkbox"

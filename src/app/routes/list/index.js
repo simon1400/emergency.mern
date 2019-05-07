@@ -23,7 +23,7 @@ export default class Create extends Component {
         if (this.props.match.params.user === "pacient") {
           this.setState({
             users: res.data.filter(
-              item => item.parrentDoctor == currentUser._id
+              item => item.parrentDoctor === currentUser._id
             )
           });
         } else {
@@ -58,14 +58,14 @@ export default class Create extends Component {
       search = this.state.search;
 
     if (data && search) {
-      data = data.filter(function(item) {
-        if (
+      data = data.filter(
+        item =>
           item.name.includes(search) ||
           item.surname.includes(search) ||
           item.rodneCislo.includes(search)
-        )
-          return true;
-      });
+            ? true
+            : false
+      );
     }
 
     return (
@@ -122,10 +122,17 @@ export default class Create extends Component {
                         <td>{item.rodneCislo}</td>
                         <td>
                           <ul className="uk-iconnav uk-flex-right">
-                            <li>
-                              <button name={item._id} onClick={this.onDelete} />
-                              <span nohref="true" uk-icon="icon: info" />
-                            </li>
+                            {this.props.match.params.user === "pacient" ? (
+                              <li>
+                                <button
+                                  name={item._id}
+                                  onClick={this.onDelete}
+                                />
+                                <span nohref="true" uk-icon="icon: info" />
+                              </li>
+                            ) : (
+                              false
+                            )}
                             <li>
                               <Link to={`/user/edit/${item._id}`}>
                                 <span uk-icon="icon: file-edit" />

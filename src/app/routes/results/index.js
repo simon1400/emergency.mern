@@ -21,11 +21,7 @@ export default class Results extends Component {
     });
   }
 
-  onSum = array =>
-    array.reduce(
-      (previousValue, currentValue) =>
-        +previousValue.checkedBody + +currentValue.checkedBody
-    );
+  onSum = array => array.reduce((prev, cur) => +prev + +cur.checkedBody, 0);
 
   render() {
     var tests = this.state.tests;

@@ -23,13 +23,12 @@ export default class Create extends Component {
       let currentUser = Cookies.getJSON("user");
       var currentTests = [];
       axios.get("http://localhost:4000/admin/test").then(res => {
-        currentUser.selectTest.map(selectItem => {
-          res.data.map(testItem => {
-            if (selectItem === testItem._id) {
-              currentTests.push(testItem);
-            }
-          });
-        });
+        currentUser.selectTest.map(selectItem =>
+          res.data.map(
+            testItem =>
+              selectItem === testItem._id ? currentTests.push(testItem) : false
+          )
+        );
 
         this.setState({
           tests: currentTests

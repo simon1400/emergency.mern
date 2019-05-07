@@ -1,8 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
-import { bindActionCreators } from "redux";
-import { frontloadConnect } from "react-frontload";
+// import { bindActionCreators } from "redux";
+// import { frontloadConnect } from "react-frontload";
 
 const AuthentticatedRoute = ({ component: Component, ...rest }) => {
   return (

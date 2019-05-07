@@ -15,7 +15,8 @@ export default class TestFull extends Component {
       checkedBody: "",
       date: "",
       done: false,
-      userId: ""
+      userId: "",
+      prev: false
     };
   }
 
@@ -29,58 +30,46 @@ export default class TestFull extends Component {
           test: res.data
         });
       });
+
     axios
       .get("http://localhost:4000/result/all/" + this.props.match.params.id)
-      .then(res => {
-        if (res.data) {
-          this.setState({
-            userId: currentUser._id,
-            resultId: "",
-            currentAsk: 0,
-            answers: [],
-            checkedName: "",
-            checkedBody: "",
-            date: "",
-            done: false
-          });
-          res.data.map(data => {
-            if (!data.done && data.userId === currentUser._id) {
-              this.setState({
-                resultId: data._id,
-                currentAsk: data.currentAsk,
-                idTest: data.idTest,
-                answers: data.answers
-              });
-            }
-          });
-        }
-      });
+      .then(
+        res =>
+          res.data
+            ? (this.setState({
+                userId: currentUser._id,
+                resultId: "",
+                currentAsk: 0,
+                answers: [],
+                checkedName: "",
+                checkedBody: "",
+                date: "",
+                done: false
+              }),
+              this.getResult(res.data, currentUser))
+            : false
+      );
   }
 
+  getResult = (resData, currentUser) => {
+    resData.map(
+      data =>
+        !data.done && data.userId === currentUser._id
+          ? this.setState({
+              resultId: data._id,
+              currentAsk: data.currentAsk,
+              idTest: data.idTest,
+              answers: data.answers
+            })
+          : false
+    );
+  };
+
   updateAnswers = e => {
-    var answers = this.state.answers;
-    var index;
-    var answer = {
-      nameAsk: this.state.test.questions[this.state.currentAsk].nameQuestion,
-      checkedValue: this.state.checkedName,
-      checkedBody: this.state.checkedBody
-    };
-    if (
-      answers.find(
-        x =>
-          x.nameAsk ===
-          this.state.test.questions[this.state.currentAsk].nameQuestion
-      )
-    ) {
-      index = answers.findIndex(
-        x =>
-          x.nameAsk ===
-          this.state.test.questions[this.state.currentAsk].nameQuestion
-      );
-      answers[index] = answer;
-    } else {
-      answers.push(answer);
-    }
+    let answers = this.onCheckedAnswers(
+      this.state.checkedName,
+      this.state.checkedBody
+    );
 
     var now = new Date();
     var date =
@@ -95,11 +84,14 @@ export default class TestFull extends Component {
       now.getMinutes();
 
     if (e === "next") {
-      this.setState({
-        currentAsk: this.state.currentAsk + 1,
-        answers: answers,
-        date: date
-      });
+      this.setState(
+        {
+          currentAsk: this.state.currentAsk + 1,
+          answers: answers,
+          date: date
+        },
+        () => console.log("next update state!")
+      );
     } else {
       this.setState({
         answers: answers,
@@ -109,25 +101,31 @@ export default class TestFull extends Component {
   };
 
   onPrev = e => {
-    this.setState({
-      currentAsk: this.state.currentAsk - 1
-    });
+    this.setState(
+      {
+        currentAsk: this.state.currentAsk - 1,
+        prev: true
+      },
+      () => console.log("prev curretn decrement")
+    );
   };
 
   onNext = async e => {
+    let currentUser = Cookies.getJSON("user");
+
+    if (!this.state.prev && !this.state.resultId) {
+      await axios
+        .get("http://localhost:4000/result/all/" + this.props.match.params.id)
+        .then(
+          res => (res.data ? this.getResult(res.data, currentUser) : false)
+        );
+    }
+
     await this.updateAnswers("next");
 
-    var data = {
-      idTest: this.state.test._id,
-      nameTest: this.state.test.nameTest,
-      currentAsk: this.state.currentAsk,
-      answers: this.state.answers,
-      date: this.state.date,
-      done: false,
-      userId: this.state.userId
-    };
+    var data = this.sendObjectData(this.state, false);
 
-    if (this.state.currentAsk <= 1 && !this.state.resultId) {
+    if (this.state.currentAsk === 1 && !this.state.resultId) {
       await axios
         .post("http://localhost:4000/result/create/", data)
         .then(res => console.log("create data next!"));
@@ -148,10 +146,12 @@ export default class TestFull extends Component {
           }
         })
         .then(() => {
-          axios.post(
-            "http://localhost:4000/result/update/" + this.state.resultId,
-            data
-          );
+          axios
+            .post(
+              "http://localhost:4000/result/update/" + this.state.resultId,
+              data
+            )
+            .then(console.log("update next"));
         });
     }
   };
@@ -159,47 +159,92 @@ export default class TestFull extends Component {
   onFinish = async () => {
     await this.updateAnswers("finish");
 
-    var data = {
-      idTest: this.state.test._id,
-      nameTest: this.state.test.nameTest,
-      currentAsk: this.state.currentAsk,
-      answers: this.state.answers,
-      date: this.state.date,
-      done: true,
-      userId: this.state.userId
-    };
+    var data = this.sendObjectData(this.state, true);
 
     await axios
       .get("http://localhost:4000/result/all/" + this.props.match.params.id)
-      .then(res => {
-        if (res.data) {
-          res.data.map(item => {
-            if (!item.done && data.userId === item.userId) {
-              this.setState({
-                resultId: item._id,
-                currentAsk: item.currentAsk,
-                idTest: item.idTest,
-                answers: item.answers
-              });
-              axios
-                .post("http://localhost:4000/result/update/" + item._id, data)
-                .then(() => (window.location.href = "/results/pacient"));
-            }
-          });
-        }
-      });
+      .then(
+        res =>
+          res.data
+            ? res.data.map(
+                item =>
+                  !item.done && data.userId === item.userId
+                    ? (this.setState({
+                        resultId: item._id,
+                        currentAsk: item.currentAsk,
+                        idTest: item.idTest,
+                        answers: item.answers
+                      }),
+                      axios
+                        .post(
+                          "http://localhost:4000/result/update/" + item._id,
+                          data
+                        )
+                        .then(
+                          () => (window.location.href = "/results/pacient")
+                        ))
+                    : false
+              )
+            : false
+      );
+  };
+
+  sendObjectData = (state, done) => {
+    var data = {
+      idTest: state.test._id,
+      nameTest: state.test.nameTest,
+      currentAsk: state.currentAsk,
+      answers: state.answers,
+      date: state.date,
+      done: done,
+      userId: state.userId
+    };
+
+    return data;
   };
 
   onHandleCheckbox = e => {
+    let answers = this.onCheckedAnswers(e.target.value, e.target.dataset.body);
+
     this.setState({
       checkedName: e.target.value,
-      checkedBody: e.target.dataset.body
+      checkedBody: e.target.dataset.body,
+      answers: answers
     });
+  };
+
+  onCheckedAnswers = (value, body) => {
+    var answers = this.state.answers;
+    var index;
+    var answer = {
+      nameAsk: this.state.test.questions[this.state.currentAsk].nameQuestion,
+      checkedValue: value,
+      checkedBody: body
+    };
+    if (
+      answers.find(
+        x =>
+          x.nameAsk ===
+          this.state.test.questions[this.state.currentAsk].nameQuestion
+      )
+    ) {
+      index = answers.findIndex(
+        x =>
+          x.nameAsk ===
+          this.state.test.questions[this.state.currentAsk].nameQuestion
+      );
+      answers[index] = answer;
+    } else {
+      answers.push(answer);
+    }
+
+    return answers;
   };
 
   render() {
     var test = this.state.test;
     var currentAsk = this.state.currentAsk;
+    var answers = this.state.answers;
     return (
       <Page id="homepage">
         <div className="uk-container">
@@ -217,12 +262,12 @@ export default class TestFull extends Component {
 
               <form>
                 <div className="uk-margin uk-grid-small uk-child-width-1-1 uk-grid">
-                  {test.questions
+                  {Object.entries(test).length
                     ? test.questions[currentAsk].asks.map((ask, indexAsk) => (
                         <label key={indexAsk}>
-                          {this.state.answers.length > 1 ? (
-                            this.state.answers[currentAsk].checkedValue ===
-                            ask.nameAsk ? (
+                          {answers.length >= 1 &&
+                          currentAsk < answers.length ? (
+                            answers[currentAsk].checkedValue === ask.nameAsk ? (
                               <input
                                 className="uk-radio"
                                 onClick={this.onHandleCheckbox}
