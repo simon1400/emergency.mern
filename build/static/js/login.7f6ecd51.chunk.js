@@ -7,23 +7,25 @@
       var n = a(42),
         l = a(13),
         o = a(14),
-        r = a(16),
-        s = a(15),
+        s = a(16),
+        r = a(15),
         c = a(17),
         i = a(0),
-        u = a.n(i),
-        m = a(5),
+        m = a.n(i),
+        u = a(5),
         d = a(6),
+        p = a(41),
         h = a(40),
-        k = a(20),
-        p = (function(e) {
+        k = a.n(h),
+        f = a(20),
+        g = (function(e) {
           function t(e) {
             var a;
             return (
               Object(l.a)(this, t),
-              ((a = Object(r.a)(
+              ((a = Object(s.a)(
                 this,
-                Object(s.a)(t).call(this, e)
+                Object(r.a)(t).call(this, e)
               )).handleChange = function(e) {
                 a.setState(Object(n.a)({}, e.target.name, e.target.value));
               }),
@@ -35,50 +37,67 @@
             Object(c.a)(t, e),
             Object(o.a)(t, [
               {
+                key: "componentDidMount",
+                value: function() {
+                  k.a
+                    .post("http://localhost:4000/admin/user/create", {
+                      name: "admin",
+                      surname: "admin",
+                      rodneCislo: "admin",
+                      password: "admin",
+                      typeUser: "admin",
+                      selectTest: []
+                    })
+                    .then(function(e) {
+                      console.log(e);
+                    });
+                }
+              },
+              {
                 key: "render",
                 value: function() {
                   var e = this;
-                  return u.a.createElement(
-                    h.a,
+                  return m.a.createElement(
+                    p.a,
                     {
                       id: "login",
                       title: "Login",
                       description: "We need to log in to stuff."
                     },
-                    u.a.createElement(
+                    m.a.createElement(
                       "div",
                       {
                         id: "modal-close-default",
                         className: "tm-modal",
                         "uk-modal": ""
                       },
-                      u.a.createElement(
+                      m.a.createElement(
                         "div",
                         {
                           className:
                             "uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-text-center"
                         },
-                        u.a.createElement("button", {
+                        m.a.createElement("button", {
                           className: "uk-modal-close-default",
                           type: "button",
                           "uk-close": ""
                         }),
-                        u.a.createElement(
+                        m.a.createElement(
                           "h2",
                           { className: "uk-modal-title" },
                           "Prihalseni"
                         ),
-                        u.a.createElement("hr", null),
-                        u.a.createElement(
+                        m.a.createElement("hr", null),
+                        m.a.createElement(
                           "form",
                           { className: "uk-form-stacked" },
-                          u.a.createElement(
+                          m.a.createElement(
                             "div",
                             { className: "uk-margin" },
-                            u.a.createElement(
+                            m.a.createElement(
                               "div",
                               { className: "uk-form-controls" },
-                              u.a.createElement("input", {
+                              m.a.createElement("input", {
                                 className: "uk-input uk-form-width-large",
                                 onChange: this.handleChange,
                                 name: "rodneCislo",
@@ -87,13 +106,13 @@
                               })
                             )
                           ),
-                          u.a.createElement(
+                          m.a.createElement(
                             "div",
                             { className: "uk-margin" },
-                            u.a.createElement(
+                            m.a.createElement(
                               "div",
                               { className: "uk-form-controls" },
-                              u.a.createElement("input", {
+                              m.a.createElement("input", {
                                 className: "uk-input uk-form-width-large",
                                 onChange: this.handleChange,
                                 name: "password",
@@ -102,8 +121,8 @@
                               })
                             )
                           ),
-                          u.a.createElement("hr", null),
-                          u.a.createElement(
+                          m.a.createElement("hr", null),
+                          m.a.createElement(
                             "button",
                             {
                               className: "uk-button uk-button-primary",
@@ -126,10 +145,10 @@
             t
           );
         })(i.Component);
-      t.default = Object(m.connect)(null, function(e) {
-        return Object(d.b)({ loginUser: k.c }, e);
-      })(p);
+      t.default = Object(u.connect)(null, function(e) {
+        return Object(d.b)({ loginUser: f.c }, e);
+      })(g);
     }
   }
 ]);
-//# sourceMappingURL=login.86785ad5.chunk.js.map
+//# sourceMappingURL=login.7f6ecd51.chunk.js.map

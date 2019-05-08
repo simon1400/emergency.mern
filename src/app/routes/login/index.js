@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Page from "../../components/page";
-// import axios from 'axios'
+import axios from "axios";
 
 import { loginUser } from "../../../modules/auth";
 
@@ -15,21 +15,19 @@ class Login extends Component {
     };
   }
 
-  // componentDidMount() {
-  //   var data = {
-  //     name: "admin",
-  //     surname: "admin",
-  //     rodneCislo: "admin",
-  //     password: "admin",
-  //     typeUser: "admin",
-  //     selectTest: []
-  //   }
-  //   axios
-  //     .post("http://localhost:4000/admin/user/create", data)
-  //     .then(res => {
-  //       console.log(res);
-  //     });
-  // }
+  componentDidMount() {
+    var data = {
+      name: "admin",
+      surname: "admin",
+      rodneCislo: "admin",
+      password: "admin",
+      typeUser: "admin",
+      selectTest: []
+    };
+    axios.post("http://localhost:4000/admin/user/create", data).then(res => {
+      console.log(res);
+    });
+  }
 
   handleChange = e => {
     this.setState({ [e.target.name]: e.target.value });
