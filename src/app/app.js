@@ -14,7 +14,7 @@ import Header from "./header";
 import Routes from "./routes";
 
 import "./app.css";
-import "uikit";
+// import "uikit";
 
 const frontload = async props => {
   return await props.getCurrentProfile();
