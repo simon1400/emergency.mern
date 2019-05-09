@@ -12,38 +12,32 @@ class Login extends Component {
     super(props);
     this.state = {
       rodneCislo: "",
-      password: ""
+      password: "",
+      error: false,
+      readPassword: true
     };
-  }
-
-  componentDidMount() {
-    // var data = {
-    //   name: "admin",
-    //   surname: "admin",
-    //   rodneCislo: "admin",
-    //   password: "admin",
-    //   typeUser: "admin",
-    //   selectTest: []
-    // };
-    // axios.post("https://server.dotaznik.hardart.cz/admin/user/create", data).then(res => {
-    //   console.log(res);
-    // });
   }
 
   login = (e, rodneCislo, password) => {
     e.preventDefault()
-    console.log(rodneCislo);
-    console.log(password);
     axios.get("https://server.dotaznik.hardart.cz/admin/user/login/" + rodneCislo + "/" + password)
       .then(res => {
-        // setCurrentUser(res.data)
-        Cookies.set("user", res.data);
-        window.location.href = '/'
+        if(res.data === 'errorpassword' || res.data === 'errorlogin'){
+          this.setState({
+            error: true
+          })
+        }else{
+          Cookies.set("user", res.data);
+          window.location.href = '/'
+        }
       });
   }
 
   handleChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
+    this.setState({
+      [e.target.name]: e.target.value,
+      error: false
+    });
   };
 
   render() {
@@ -51,14 +45,15 @@ class Login extends Component {
       <Page id="login" title="Login" description="We need to log in to stuff.">
         <div id="modal-close-default" className="tm-modal" uk-modal="">
           <div className="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-text-center">
-            <button
-              className="uk-modal-close-default"
-              type="button"
-              uk-close=""
-            />
             <h2 className="uk-modal-title">Prihalseni</h2>
             <hr />
+
             <form className="uk-form-stacked">
+              {this.state.error ? <div className="uk-alert-danger" uk-alert="">
+                  <p>Zadali jste chybné přihlašovací údaje</p>
+                </div>
+              : ''}
+
               <div className="uk-margin">
                 <div className="uk-form-controls">
                   <input
@@ -77,6 +72,8 @@ class Login extends Component {
                     className="uk-input uk-form-width-large"
                     onChange={this.handleChange}
                     name="password"
+                    readOnly={this.state.readPassword}
+                    onFocus={(e) => this.setState({readPassword: false})}
                     type="password"
                     placeholder="Heslo"
                   />

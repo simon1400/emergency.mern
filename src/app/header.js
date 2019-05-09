@@ -38,11 +38,11 @@ const doctorLinks = [
     text: "Lists pacient",
     type: "doctor"
   },
-  {
-    to: "/add/pacient",
-    text: "Vytvorit pacienta",
-    type: "doctor"
-  }
+  // {
+  //   to: "/add/pacient",
+  //   text: "Vytvorit pacienta",
+  //   type: "doctor"
+  // }
 ];
 
 const pacientLinks = [

@@ -2,6 +2,10 @@ const express = require("express");
 const userRoutes = express.Router();
 let User = require("../models/user.model");
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
+
 userRoutes.route("/all/").get(function(req, res) {
   User.find(function(err, todos) {
     if (err) {
@@ -15,14 +19,17 @@ userRoutes.route("/all/").get(function(req, res) {
 userRoutes.route("/login/:rodneCislo/:password").get(function(req, res) {
   var rodneCislo = req.params.rodneCislo;
   var password = req.params.password;
-  User.findOne({ rodneCislo: rodneCislo, password: password }, function(
-    err,
-    data
-  ) {
+  User.findOne({ "rodneCislo": rodneCislo }, function(err, data) {
     if (err) {
       console.log(err);
-    } else {
-      res.json(data);
+    } else if(data) {
+      if(bcrypt.compareSync(password, data.password)){
+        res.json(data);
+      }else{
+        res.send('errorpassword')
+      }
+    }else{
+      res.send('errorlogin')
     }
   });
 });
@@ -51,6 +58,10 @@ userRoutes.route("/all/:type").get(function(req, res) {
 
 userRoutes.route("/create").post(function(req, res) {
   let user = new User(req.body);
+  var salt = bcrypt.genSaltSync(saltRounds);
+  var hash = bcrypt.hashSync(user.password, salt);
+  user.password = hash
+
   user
     .save()
     .then(user => {

@@ -3,6 +3,7 @@ import Page from "../../components/page";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
+import UIkit from 'uikit';
 
 export default class Create extends Component {
   constructor(props) {
@@ -34,19 +35,27 @@ export default class Create extends Component {
       });
   }
 
+
+
   onDelete = e => {
     e.preventDefault();
+    var saveTarget = e.currentTarget;
+     e.currentTarget.blur();
+     let users = this.state.users;
+     UIkit.modal.confirm('Opravdu smazat uzivatele?').then(function () {
 
-    let users = this.state.users;
-    for (var i = 0; i < users.length; i++) {
-      if (users[i]._id === e.target.name) users.splice(i, 1);
-    }
+       for (var i = 0; i < users.length; i++) {
+         if (users[i]._id === saveTarget.name) users.splice(i, 1);
+       }
 
-    this.setState({
-      users: users
-    });
-
-    axios.delete("https://server.dotaznik.hardart.cz/admin/user/delete/" + e.target.name);
+       axios.delete("https://server.dotaznik.hardart.cz/admin/user/delete/" + saveTarget.name);
+     }, function () {
+         console.log('Rejected.')
+     }).then(() => {
+       this.setState({
+         users: users
+       });
+     });
   };
 
   handleChange = e => {
@@ -139,8 +148,9 @@ export default class Create extends Component {
                               </Link>
                             </li>
                             <li>
-                              <button name={item._id} onClick={this.onDelete} />
-                              <span uk-icon="icon: trash" />
+                              <a nohref="" name={item._id} onClick={this.onDelete}>
+                                <span uk-icon="icon: trash" />
+                              </a>
                             </li>
                           </ul>
                         </td>

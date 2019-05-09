@@ -15,7 +15,8 @@ export default class Create extends Component {
       password: "",
       typeUser: "",
       parrentDoctor: "",
-      selectTest: []
+      selectTest: [],
+      readPassword: true
     };
   }
 
@@ -94,7 +95,7 @@ export default class Create extends Component {
       <Page id="homepage">
         <div className="uk-container uk-container-xsmall">
           <div className="uk-grid uk-child-width-1-1" uk-grid="">
-            <form className="uk-form-stacked">
+            <form className="uk-form-stacked" autoComplete="off">
               <div className="uk-margin">
                 <label className="uk-form-label" htmlFor="form-stacked-text">
                   Jmeno
@@ -138,6 +139,7 @@ export default class Create extends Component {
                     value={this.state.rodneCislo}
                     type="text"
                     name="rodneCislo"
+                    autoComplete="off"
                     onChange={this.handleChange}
                     placeholder="Rodne cislo"
                   />
@@ -152,7 +154,10 @@ export default class Create extends Component {
                   <input
                     className="uk-input "
                     value={this.state.password}
-                    type="text"
+                    type="password"
+                    readOnly={this.state.readPassword}
+                    onFocus={(e) => this.setState({readPassword: false})}
+                    autoComplete="off"
                     name="password"
                     onChange={this.handleChange}
                     placeholder="Heslo"

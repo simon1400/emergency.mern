@@ -117,15 +117,15 @@ export default class Create extends Component {
   deleteAsk = e => {
     e.preventDefault();
     let questions = this.state.questions;
-    questions[e.target.dataset.countparent].countAsk =
-      questions[e.target.dataset.countparent].countAsk - 1;
+    questions[e.currentTarget.dataset.countparent].countAsk =
+      questions[e.currentTarget.dataset.countparent].countAsk - 1;
     for (
       var i = 0;
-      i < questions[e.target.dataset.countparent].asks.length;
+      i < questions[e.currentTarget.dataset.countparent].asks.length;
       i++
     ) {
-      if (i === parseInt(e.target.dataset.index)) {
-        questions[e.target.dataset.countparent].asks.splice(i, 1);
+      if (i === parseInt(e.currentTarget.dataset.index)) {
+        questions[e.currentTarget.dataset.countparent].asks.splice(i, 1);
       }
     }
     this.setState({
@@ -233,10 +233,10 @@ export default class Create extends Component {
                     (ask, index) => (
                       <div
                         key={index}
-                        className="uk-grid uk-grid-small"
+                        className="uk-grid uk-grid-small uk-margin"
                         uk-grid=""
                       >
-                        <div className="uk-margin uk-width-4-5">
+                        <div className="uk-width-4-5">
                           <input
                             className="uk-input"
                             type="text"
@@ -251,7 +251,7 @@ export default class Create extends Component {
                             }
                           />
                         </div>
-                        <div className="uk-width-1-5 uk-flex uk-flex-between">
+                        <div className="uk-width-1-5 uk-flex uk-flex-between uk-flex-middle">
                           <input
                             className="uk-input"
                             type="text"
@@ -265,13 +265,15 @@ export default class Create extends Component {
                                 .asks[index].valueAsk
                             }
                           />
-                          <span
+                          <a
+                            nohref=""
                             data-countparent={this.state.currentQuestion}
                             data-index={index}
                             onClick={this.deleteAsk}
+                            className="uk-margin-left"
                           >
-                            minus
-                          </span>
+                            <span className="uk-text-danger" uk-icon="icon: close; ratio: 2" />
+                          </a>
                         </div>
                       </div>
                     )
