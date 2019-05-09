@@ -59,7 +59,7 @@ export const establishCurrentUser = () => dispatch =>
 
 export const loginUser = (email, password) => dispatch => {
   return axios
-    .get("http://localhost:4000/admin/user/login/" + email + "/" + password)
+    .get("https://localhost:4000/admin/user/login/" + email + "/" + password)
     .then(res => {
       dispatch(setCurrentUser(res.data));
     });

@@ -14,7 +14,7 @@ export default class Create extends Component {
 
   componentDidMount() {
     if (this.props.match.params.user === "admin") {
-      axios.get("http://server.dotaznik.hardart.cz/admin/test").then(res => {
+      axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
         this.setState({
           tests: res.data
         });
@@ -22,7 +22,7 @@ export default class Create extends Component {
     } else if (this.props.match.params.user === "pacient") {
       let currentUser = Cookies.getJSON("user");
       var currentTests = [];
-      axios.get("http://server.dotaznik.hardart.cz/admin/test").then(res => {
+      axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
         currentUser.selectTest.map(selectItem =>
           res.data.map(
             testItem =>
@@ -51,7 +51,7 @@ export default class Create extends Component {
       () => console.log(this.state)
     );
     axios.delete(
-      "http://server.dotaznik.hardart.cz/admin/test/delete/" + e.currentTarget.name
+      "https://server.dotaznik.hardart.cz/admin/test/delete/" + e.currentTarget.name
     );
   };
 

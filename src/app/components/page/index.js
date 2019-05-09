@@ -5,7 +5,7 @@ import Helmet from "react-helmet";
 
 const SITE_URL =
   process.env.NODE_ENV === "development"
-    ? "http://localhost:3000"
+    ? "https://localhost:3000"
     : "https://cra-ssr.herokuapp.com";
 
 const FACEBOOK_APP_ID = "XXXXXXXXX";
@@ -89,7 +89,7 @@ class Page extends Component {
           htmlAttributes={{
             lang: "en",
             itemscope: undefined,
-            itemtype: `http://schema.org/${rest.schema || "WebPage"}`
+            itemtype: `https://schema.org/${rest.schema || "WebPage"}`
           }}
           title={
             rest.title ? rest.title + defaultSep + defaultTitle : defaultTitle

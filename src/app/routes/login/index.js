@@ -25,7 +25,7 @@ class Login extends Component {
     //   typeUser: "admin",
     //   selectTest: []
     // };
-    // axios.post("http://server.dotaznik.hardart.cz/admin/user/create", data).then(res => {
+    // axios.post("https://server.dotaznik.hardart.cz/admin/user/create", data).then(res => {
     //   console.log(res);
     // });
   }
@@ -34,7 +34,7 @@ class Login extends Component {
     e.preventDefault()
     console.log(rodneCislo);
     console.log(password);
-    axios.get("http://server.dotaznik.hardart.cz/admin/user/login/" + rodneCislo + "/" + password)
+    axios.get("https://server.dotaznik.hardart.cz/admin/user/login/" + rodneCislo + "/" + password)
       .then(res => {
         // setCurrentUser(res.data)
         Cookies.set("user", res.data);
