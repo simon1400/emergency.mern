@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router";
 import Helmet from "react-helmet";
-import logo from "../../assets/logo.jpg";
+// import logo from "../../assets/logo.jpg";
 
 const SITE_URL =
   process.env.NODE_ENV === "development"
@@ -12,7 +12,7 @@ const FACEBOOK_APP_ID = "XXXXXXXXX";
 
 const defaultTitle = "Dotaznik";
 const defaultDescription = "Dímův dotázník";
-const defaultImage = `${SITE_URL}${logo}`;
+// const defaultImage = `${SITE_URL}${logo}`;
 const defaultTwitter = "@cereallarceny";
 const defaultSep = " | ";
 
@@ -38,23 +38,23 @@ class Page extends Component {
     const theDescription = description
       ? description.substring(0, 155)
       : defaultDescription;
-    const theImage = image ? `${SITE_URL}${image}` : defaultImage;
+    // const theImage = image ? `${SITE_URL}${image}` : defaultImage;
 
     const metaTags = [
       { itemprop: "name", content: theTitle },
       { itemprop: "description", content: theDescription },
-      { itemprop: "image", content: theImage },
+      // { itemprop: "image", content: theImage },
       { name: "description", content: theDescription },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: defaultTwitter },
       { name: "twitter:title", content: theTitle },
       { name: "twitter:description", content: theDescription },
       { name: "twitter:creator", content: twitter || defaultTwitter },
-      { name: "twitter:image:src", content: theImage },
+      // { name: "twitter:image:src", content: theImage },
       { property: "og:title", content: theTitle },
       { property: "og:type", content: contentType || "website" },
       { property: "og:url", content: SITE_URL + pathname },
-      { property: "og:image", content: theImage },
+      // { property: "og:image", content: theImage },
       { property: "og:description", content: theDescription },
       { property: "og:site_name", content: defaultTitle },
       { property: "fb:app_id", content: FACEBOOK_APP_ID }
