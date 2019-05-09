@@ -120,13 +120,11 @@ class Header extends Component {
                   if (
                     link.auth &&
                     link.type === "admin" &&
-                    this.props.isAuthenticated &&
                     this.props.user.typeUser === "admin"
                   ) {
                     return TheLink;
                   } else if (
                     link.auth &&
-                    this.props.isAuthenticated &&
                     link.type !== "admin"
                   ) {
                     return TheLink;

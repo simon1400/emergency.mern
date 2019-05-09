@@ -12,7 +12,7 @@ export default class TestFull extends Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:4000/result/" + this.props.match.params.id)
+      .get("http://server.dotaznik.hardart.cz/result/" + this.props.match.params.id)
       .then(res => {
         this.setState({
           test: res.data

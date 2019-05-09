@@ -17,7 +17,7 @@ export default class Create extends Component {
     let currentUser = Cookies.getJSON("user");
     axios
       .get(
-        "http://localhost:4000/admin/user/all/" + this.props.match.params.user
+        "http://server.dotaznik.hardart.cz/admin/user/all/" + this.props.match.params.user
       )
       .then(res => {
         if (this.props.match.params.user === "pacient") {
@@ -46,7 +46,7 @@ export default class Create extends Component {
       users: users
     });
 
-    axios.delete("http://localhost:4000/admin/user/delete/" + e.target.name);
+    axios.delete("http://server.dotaznik.hardart.cz/admin/user/delete/" + e.target.name);
   };
 
   handleChange = e => {

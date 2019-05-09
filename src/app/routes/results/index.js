@@ -14,7 +14,7 @@ export default class Results extends Component {
 
   componentDidMount() {
     var currentUser = Cookies.getJSON("user");
-    axios.get("http://localhost:4000/result/").then(res => {
+    axios.get("http://server.dotaznik.hardart.cz/result/").then(res => {
       this.setState({
         tests: res.data.filter(item => item.userId.includes(currentUser._id))
       });

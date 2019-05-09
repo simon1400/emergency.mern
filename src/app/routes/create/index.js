@@ -28,7 +28,7 @@ export default class Create extends Component {
   componentDidMount() {
     if (this.props.match.params.id) {
       axios
-        .get("http://localhost:4000/admin/test/" + this.props.match.params.id)
+        .get("http://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
         .then(res => {
           this.setState({
             ...res.data
@@ -139,14 +139,14 @@ export default class Create extends Component {
     if (this.props.match.params.id) {
       axios
         .post(
-          "http://localhost:4000/admin/test/update/" +
+          "http://server.dotaznik.hardart.cz/admin/test/update/" +
             this.props.match.params.id,
           this.state
         )
         .then((window.location.href = "/tests/admin"));
     } else {
       axios
-        .post("http://localhost:4000/admin/test/create", this.state)
+        .post("http://server.dotaznik.hardart.cz/admin/test/create", this.state)
         .then((window.location.href = "/tests/admin"));
     }
   };

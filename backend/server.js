@@ -12,10 +12,15 @@ const resultRoutes = require("./routes/result");
 app.use(cors());
 app.use(bodyParser.json());
 
+// mongoose.connect(
+//   "mongodb://127.0.0.1:27017/dotaznik",
+//   { useNewUrlParser: true }
+// );
 mongoose.connect(
-  "mongodb://127.0.0.1:27017/dotaznik",
+  "mongodb://admin:d04101996d@ds153556.mlab.com:53556/dotaznik",
   { useNewUrlParser: true }
 );
+
 const connection = mongoose.connection;
 
 connection.once("open", function() {

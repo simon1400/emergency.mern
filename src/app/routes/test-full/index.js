@@ -24,7 +24,7 @@ export default class TestFull extends Component {
     let currentUser = Cookies.getJSON("user");
 
     axios
-      .get("http://localhost:4000/admin/test/" + this.props.match.params.id)
+      .get("http://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
       .then(res => {
         this.setState({
           test: res.data
@@ -32,7 +32,7 @@ export default class TestFull extends Component {
       });
 
     axios
-      .get("http://localhost:4000/result/all/" + this.props.match.params.id)
+      .get("http://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
       .then(
         res =>
           res.data
@@ -115,7 +115,7 @@ export default class TestFull extends Component {
 
     if (!this.state.prev && !this.state.resultId) {
       await axios
-        .get("http://localhost:4000/result/all/" + this.props.match.params.id)
+        .get("http://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
         .then(
           res => (res.data ? this.getResult(res.data, currentUser) : false)
         );
@@ -127,13 +127,13 @@ export default class TestFull extends Component {
 
     if (this.state.currentAsk === 1 && !this.state.resultId) {
       await axios
-        .post("http://localhost:4000/result/create/", data)
+        .post("http://server.dotaznik.hardart.cz/result/create/", data)
         .then(res => console.log("create data next!"));
     }
 
     if (this.state.currentAsk && this.state.resultId) {
       await axios
-        .get("http://localhost:4000/result/" + this.state.resultId)
+        .get("http://server.dotaznik.hardart.cz/result/" + this.state.resultId)
         .then(res => {
           var data = res.data[0];
           if (data && !data.done) {
@@ -148,7 +148,7 @@ export default class TestFull extends Component {
         .then(() => {
           axios
             .post(
-              "http://localhost:4000/result/update/" + this.state.resultId,
+              "http://server.dotaznik.hardart.cz/result/update/" + this.state.resultId,
               data
             )
             .then(console.log("update next"));
@@ -162,7 +162,7 @@ export default class TestFull extends Component {
     var data = this.sendObjectData(this.state, true);
 
     await axios
-      .get("http://localhost:4000/result/all/" + this.props.match.params.id)
+      .get("http://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
       .then(
         res =>
           res.data
@@ -177,7 +177,7 @@ export default class TestFull extends Component {
                       }),
                       axios
                         .post(
-                          "http://localhost:4000/result/update/" + item._id,
+                          "http://server.dotaznik.hardart.cz/result/update/" + item._id,
                           data
                         )
                         .then(

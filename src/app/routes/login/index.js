@@ -3,8 +3,9 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Page from "../../components/page";
 import axios from "axios";
+import Cookies from "js-cookie";
 
-import { loginUser } from "../../../modules/auth";
+import { setCurrentUser } from "../../../modules/auth";
 
 class Login extends Component {
   constructor(props) {
@@ -16,17 +17,29 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    var data = {
-      name: "admin",
-      surname: "admin",
-      rodneCislo: "admin",
-      password: "admin",
-      typeUser: "admin",
-      selectTest: []
-    };
-    axios.post("http://localhost:4000/admin/user/create", data).then(res => {
-      console.log(res);
-    });
+    // var data = {
+    //   name: "admin",
+    //   surname: "admin",
+    //   rodneCislo: "admin",
+    //   password: "admin",
+    //   typeUser: "admin",
+    //   selectTest: []
+    // };
+    // axios.post("http://server.dotaznik.hardart.cz/admin/user/create", data).then(res => {
+    //   console.log(res);
+    // });
+  }
+
+  login = (e, rodneCislo, password) => {
+    e.preventDefault()
+    console.log(rodneCislo);
+    console.log(password);
+    axios.get("http://server.dotaznik.hardart.cz/admin/user/login/" + rodneCislo + "/" + password)
+      .then(res => {
+        // setCurrentUser(res.data)
+        Cookies.set("user", res.data);
+        window.location.href = '/'
+      });
   }
 
   handleChange = e => {
@@ -72,8 +85,9 @@ class Login extends Component {
               <hr />
               <button
                 className="uk-button uk-button-primary"
-                onClick={() =>
-                  this.props.loginUser(
+                onClick={(e) =>
+                  this.login(
+                    e,
                     this.state.rodneCislo,
                     this.state.password
                   )
@@ -90,7 +104,7 @@ class Login extends Component {
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ loginUser }, dispatch);
+  bindActionCreators({ setCurrentUser }, dispatch);
 
 export default connect(
   null,

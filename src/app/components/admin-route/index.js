@@ -17,11 +17,13 @@ const AdminRoute = ({ component: Component, ...rest }) => {
     <Route
       {...rest}
       render={props =>
-        currentUser.typeUser === "admin" ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to={`/`} />
-        )
+        currentUser ? (
+          currentUser.typeUser === "admin" ? (
+            <Component {...props} />
+          ) : (
+            <Redirect to={`/`} />
+          )
+        ) : (<Redirect to={`/`} />)
       }
     />
   );
