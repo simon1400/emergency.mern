@@ -143,11 +143,14 @@ export default class Create extends Component {
             this.props.match.params.id,
           this.state
         )
-        .then((window.location.href = "/tests/admin"));
+        .then(res => window.location.href = "/tests/admin");
     } else {
       axios
         .post("https://server.dotaznik.hardart.cz/admin/test/create", this.state)
-        .then((window.location.href = "/tests/admin"));
+        .then(res => {
+          console.log(res);
+          window.location.href = "/tests/admin"
+        });
     }
   };
 

@@ -6,15 +6,20 @@ import { logoutUser } from "../modules/auth";
 
 const adminLinks = [
   {
+    to: "/edit-homepage",
+    text: "Edit homepage",
+    type: "admin"
+  },
+  {
     to: "/tests/admin",
     text: "All tests",
     type: "admin"
   },
-  {
-    to: "/add/doctor",
-    text: "Vytvorit doctora",
-    type: "admin"
-  },
+  // {
+  //   to: "/add/doctor",
+  //   text: "Vytvorit doctora",
+  //   type: "admin"
+  // },
   {
     to: "/create",
     text: "Create test",
@@ -105,9 +110,10 @@ class Header extends Component {
   render() {
     var menu = this.state.menu;
     return (
-      <header className="uk-section-primary uk-preserve-color uk-margin-bottom">
-        <div className="uk-navbar-container uk-container" uk-navbar="">
-          <div className="uk-navbar-left ">
+      <header className="uk-preserve-color uk-margin-bottom">
+      <div className="uk-navbar-container">
+        <div className="uk-container" uk-navbar="">
+          <div className="uk-navbar-left">
             <a className="uk-navbar-item uk-logo uk-preserve-color" href="/">
               Dotaznik
             </a>
@@ -161,6 +167,7 @@ class Header extends Component {
               </li>
             </ul>
           </div>
+        </div>
         </div>
       </header>
     );

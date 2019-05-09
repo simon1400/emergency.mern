@@ -25,7 +25,8 @@ questionsRoutes.route("/:id").get(function(req, res) {
 });
 
 questionsRoutes.route("/create").post(function(req, res) {
-  let question = new Questions(req.body);
+  var question = new Questions(req.body);
+  console.log(question);
   question
     .save()
     .then(question => {

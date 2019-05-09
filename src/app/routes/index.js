@@ -65,6 +65,12 @@ const Create = Loadable({
   modules: ["create"]
 });
 
+const EditHomepage = Loadable({
+  loader: () => import(/* webpackChunkName: "profile" */ "./edit-homepage"),
+  loading: () => null,
+  modules: ["edit-homepage"]
+});
+
 export default class Routes extends Component {
   render() {
     return (
@@ -72,16 +78,8 @@ export default class Routes extends Component {
         <AuthentticatedRoute exact path="/" component={Homepage} />
         <AuthentticatedRoute exact path="/tests/:user" component={Tests} />
         <AuthentticatedRoute exact path="/tests/pacient/:id" component={Test} />
-        <AuthentticatedRoute
-          exact
-          path="/results/pacient"
-          component={Results}
-        />
-        <AuthentticatedRoute
-          exact
-          path="/view/results/:id"
-          component={ResultsView}
-        />
+        <AuthentticatedRoute exact path="/results/pacient" component={Results} />
+        <AuthentticatedRoute exact path="/view/results/:id" component={ResultsView} />
 
         <DoctorRoute exact path="/list/all/:user" component={List} />
         <DoctorRoute exact path="/add/:typeUser" component={Add} />
@@ -89,6 +87,7 @@ export default class Routes extends Component {
 
         <AdminRoute exact path="/create/:id" component={Create} />
         <AdminRoute exact path="/create" component={Create} />
+        <AdminRoute exact path="/edit-homepage" component={EditHomepage} />
 
         <UnauthenticatedRoute exact path="/login" component={Login} />
 

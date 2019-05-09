@@ -1,17 +1,41 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Page from '../../components/page';
+import axios from 'axios'
 
-export default () => (
-  <Page id="homepage">
-    <article className="uk-article">
-      <div className="uk-container">
-        <div className="uk-child-width-1-1 uk-grid" uk-grid="">
-          <div className="uk-text-left">
-            <h1 className="uk-article-title">Heading</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+export default class Homepage extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      head: '',
+      description: ''
+    }
+  }
+
+  componentDidMount() {
+    axios.get('https://server.dotaznik.hardart.cz/homepage').then(res => {
+      console.log(res);
+      this.setState({
+        head: res.data[0].head,
+        description: res.data[0].description
+      })
+    })
+  }
+
+  render() {
+    return (
+      <Page id="homepage">
+        <article className="uk-article">
+          <div className="uk-container">
+            <div className="uk-child-width-1-1 uk-grid" uk-grid="">
+              <div className="uk-text-left">
+                <h1 className="uk-article-title">{this.state.head}</h1>
+                <p>{this.state.description}</p>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </article>
-  </Page>
-);
+        </article>
+      </Page>
+    )
+  }
+}
