@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Page from "../../components/page";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import Cookies from "js-cookie";
+
 import UIkit from 'uikit';
 
 export default class Create extends Component {
@@ -15,7 +15,7 @@ export default class Create extends Component {
   }
 
   componentDidMount() {
-    let currentUser = Cookies.getJSON("user");
+    let currentUser = JSON.parse(localStorage.getItem("user"));
     axios
       .get(
         "https://server.dotaznik.hardart.cz/admin/user/all/" + this.props.match.params.user

@@ -1,4 +1,4 @@
-import Cookies from "js-cookie";
+
 
 export const SET_CURRENT_PROFILE = "auth/SET_CURRENT_PROFILE";
 
@@ -22,7 +22,7 @@ export default (state = initialState, action) => {
 export const getCurrentProfile = id => dispatch =>
   new Promise(resolve => {
     let profile;
-    let userFromCookie = Cookies.getJSON("user");
+    let userFromCookie = JSON.parse(localStorage.getItem("user"));
 
     profile = {
       ...userFromCookie

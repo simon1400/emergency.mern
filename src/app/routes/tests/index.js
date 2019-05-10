@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Page from "../../components/page";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import Cookies from "js-cookie";
+
 
 export default class Create extends Component {
   constructor(props) {
@@ -20,7 +20,7 @@ export default class Create extends Component {
         });
       });
     } else if (this.props.match.params.user === "pacient") {
-      let currentUser = Cookies.getJSON("user");
+      let currentUser = JSON.parse(localStorage.getItem("user"));
       var currentTests = [];
       axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
         currentUser.selectTest.map(selectItem =>

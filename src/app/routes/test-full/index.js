@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Page from "../../components/page";
 import axios from "axios";
-import Cookies from "js-cookie";
+
 
 export default class TestFull extends Component {
   constructor(props) {
@@ -21,7 +21,7 @@ export default class TestFull extends Component {
   }
 
   componentDidMount() {
-    let currentUser = Cookies.getJSON("user");
+    let currentUser = JSON.parse(localStorage.getItem("user"));
 
     axios
       .get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
@@ -111,7 +111,7 @@ export default class TestFull extends Component {
   };
 
   onNext = async e => {
-    let currentUser = Cookies.getJSON("user");
+    let currentUser = JSON.parse(localStorage.getItem("user"));
 
     if (!this.state.prev && !this.state.resultId) {
       await axios

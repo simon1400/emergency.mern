@@ -4,14 +4,14 @@ import { Route, Redirect } from "react-router-dom";
 import { withRouter } from "react-router";
 import { bindActionCreators } from "redux";
 import { frontloadConnect } from "react-frontload";
-import Cookies from "js-cookie";
+
 
 import { getCurrentProfile } from "../../../modules/profile";
 
 const frontload = async props => await props.getCurrentProfile();
 
 const AdminRoute = ({ component: Component, ...rest }) => {
-  let currentUser = Cookies.getJSON("user");
+  let currentUser = JSON.parse(localStorage.getItem("user"));
 
   return (
     <Route

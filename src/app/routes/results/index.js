@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Page from "../../components/page";
 import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
+
 import axios from "axios";
 
 export default class Results extends Component {
@@ -13,7 +13,7 @@ export default class Results extends Component {
   }
 
   componentDidMount() {
-    var currentUser = Cookies.getJSON("user");
+    var currentUser = JSON.parse(localStorage.getItem("user"));
     axios.get("https://server.dotaznik.hardart.cz/result/").then(res => {
       this.setState({
         tests: res.data.filter(item => item.userId.includes(currentUser._id))

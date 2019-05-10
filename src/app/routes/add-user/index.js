@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Page from "../../components/page";
 import axios from "axios";
-import Cookies from "js-cookie";
+
 
 import Tests from "./tests";
 
@@ -30,7 +30,7 @@ export default class Create extends Component {
     }
 
     if (this.props.match.params.typeUser === "pacient") {
-      let currentUser = Cookies.getJSON("user");
+      let currentUser = JSON.parse(localStorage.getItem("user"));
       this.setState(
         {
           parrentDoctor: currentUser._id

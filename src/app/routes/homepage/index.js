@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Page from '../../components/page';
 import axios from 'axios'
-import Cookies from "js-cookie";
+
 
 export default class Homepage extends Component {
 
@@ -15,7 +15,7 @@ export default class Homepage extends Component {
   }
 
   componentDidMount() {
-    let currentUser = Cookies.getJSON("user");
+    let currentUser = JSON.parse(localStorage.getItem("user"));
     this.setState({typeUser: currentUser.typeUser})
 
     axios.get('https://server.dotaznik.hardart.cz/homepage').then(res => {

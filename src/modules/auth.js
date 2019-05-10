@@ -1,4 +1,4 @@
-import Cookies from "js-cookie";
+
 import axios from "axios";
 
 export const AUTHENTICATE = "auth/AUTHENTICATE";
@@ -35,7 +35,7 @@ export const setCurrentUser = user => dispatch =>
       user
     });
 
-    Cookies.set("user", user);
+    localStorage.setItem("user", JSON.stringify(user))
 
     dispatch({
       type: AUTHENTICATE,
@@ -47,7 +47,7 @@ export const setCurrentUser = user => dispatch =>
 
 export const establishCurrentUser = () => dispatch =>
   new Promise(resolve => {
-    let userFromCookie = Cookies.getJSON("user");
+    let userFromCookie = JSON.parse(localStorage.getItem("user"));
 
     if (userFromCookie) {
       dispatch(setCurrentUser(userFromCookie));
@@ -77,6 +77,6 @@ export const logoutUser = () => dispatch =>
       user: {}
     });
 
-    Cookies.remove("user");
+    localStorage.removeItem("user");
     resolve({});
   });

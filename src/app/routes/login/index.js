@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Page from "../../components/page";
 import axios from "axios";
-import Cookies from "js-cookie";
+
 
 import { setCurrentUser } from "../../../modules/auth";
 
@@ -27,7 +27,7 @@ class Login extends Component {
             error: true
           })
         }else{
-          Cookies.set("user", res.data);
+          localStorage.setItem("user", JSON.stringify(res.data))
           window.location.href = '/'
         }
       });

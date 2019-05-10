@@ -3,10 +3,10 @@ import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
 // import { bindActionCreators } from "redux";
 // import { frontloadConnect } from "react-frontload";
-import Cookies from "js-cookie";
+
 
 const AuthentticatedRoute = ({ component: Component, ...rest }) => {
-  let currentUser = Cookies.getJSON("user");
+  let currentUser = JSON.parse(localStorage.getItem("user"));
 
   return (
     <Route
