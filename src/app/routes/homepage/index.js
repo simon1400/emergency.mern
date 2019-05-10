@@ -20,11 +20,11 @@ export default class Homepage extends Component {
     this.setState({typeUser: currentUser.typeUser})
 
     if(navigator.onLine){
-
       if(homedata){
         axios.post("https://server.dotaznik.hardart.cz/homepage/update/5cd43282836c305a14770983", homedata)
           .then(res => {
-            window.location.href = "/";
+            localStorage.removeItem("homepage")
+            console.log('remove localStorage homepage');
           });
       }
 
