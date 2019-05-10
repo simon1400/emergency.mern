@@ -85,7 +85,7 @@ export default class Create extends Component {
             uk-grid=""
             uk-height-match=".tm-equal-height"
           >
-            <div className="uk-width-4-5">
+            <div className="uk-width-4-5@s uk-width-1-1">
               <div className="uk-margin">
                 <form className="uk-search uk-search-default uk-width-1-1">
                   <span uk-search-icon="" />
@@ -100,7 +100,7 @@ export default class Create extends Component {
                 </form>
               </div>
             </div>
-            <div className="uk-width-1-5">
+            <div className="uk-width-1-5@s uk-width-1-1">
               <Link
                 className="uk-button uk-button-primary uk-width-1-1 tm-equal-height"
                 to={`/add/${this.props.match.params.user}`}
@@ -112,11 +112,11 @@ export default class Create extends Component {
         </div>
         <div className="uk-container">
           <div className="uk-grid uk-child-width-1-1" uk-grid="">
-            <div>
-              <table className="uk-table uk-table-striped uk-table-hover uk-table-middle uk-margin-bottom">
+            <div classNmae="uk-overflow-auto">
+              <table className="uk-table uk-table-striped uk-table-hover uk-table-small uk-table-divider uk-margin-bottom">
                 <thead>
                   <tr>
-                    <th>Jmeno</th>
+                    <th className="uk-visible@s">Jmeno</th>
                     <th>Prijmeni</th>
                     <th>Rodne cislo</th>
                     <th className="uk-text-right">Options</th>
@@ -126,7 +126,7 @@ export default class Create extends Component {
                   {data.length ? (
                     data.map((item, index) => (
                       <tr key={index}>
-                        <td>{item.name}</td>
+                        <td className="uk-visible@s">{item.name}</td>
                         <td>{item.surname}</td>
                         <td>{item.rodneCislo}</td>
                         <td>

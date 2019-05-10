@@ -236,7 +236,7 @@ export default class Create extends Component {
                         className="uk-grid uk-grid-small uk-margin"
                         uk-grid=""
                       >
-                        <div className="uk-width-4-5">
+                        <div className="uk-width-4-5@s uk-width-1-1">
                           <input
                             className="uk-input"
                             type="text"
@@ -251,7 +251,7 @@ export default class Create extends Component {
                             }
                           />
                         </div>
-                        <div className="uk-width-1-5 uk-flex uk-flex-between uk-flex-middle">
+                        <div className="uk-width-1-5@s uk-width-1-1 uk-flex uk-flex-between uk-flex-middle">
                           <input
                             className="uk-input"
                             type="text"
@@ -290,29 +290,37 @@ export default class Create extends Component {
 
                   <hr />
 
-                  <button
-                    className="uk-button uk-button-primary uk-align-right"
-                    onClick={this.addQuestion}
-                  >
-                    Next question
-                  </button>
-                  {this.state.currentQuestion ? (
-                    <button
-                      className="uk-button uk-button-primary uk-align-right"
-                      onClick={this.prevQuestion}
-                    >
-                      Prev question
-                    </button>
-                  ) : (
-                    ""
-                  )}
+                  <div className="uk-grid uk-child-width-1-2@s uk-child-width-1-1" uk-grid="">
+                    <div>
+                      <button className="uk-button uk-button-primary uk-width-auto@s uk-width-1-1" onClick={this.submitForm}>
+                        Save
+                      </button>
+                    </div>
+                    <div>
+                      <div className="uk-grid uk-grid-collapse@s" uk-grid="">
+                      {this.state.currentQuestion ?
+                        <div className="uk-width-2-3@s uk-width-1-2">
+                          <button className="uk-button uk-button-primary uk-width-1-1 uk-width-auto@s uk-align-right@s" onClick={this.prevQuestion}>
+                            Prev
+                          </button>
+                        </div>
+                       : ""}
 
-                  <button
-                    className="uk-button uk-button-primary"
-                    onClick={this.submitForm}
-                  >
-                    Save
-                  </button>
+                        <div className={this.state.currentQuestion ? 'uk-width-1-3@s uk-width-1-2' : 'uk-width-1-1'}>
+                          <button className="uk-button uk-button-primary uk-width-1-1 uk-align-right@s" onClick={this.addQuestion}>
+                            Next
+                          </button>
+                        </div>
+
+
+                      </div>
+                    </div>
+
+
+                  </div>
+
+
+
                 </fieldset>
               </form>
             </div>
