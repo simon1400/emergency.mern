@@ -79,7 +79,7 @@ body{
   padding-right: 5px;
 }
 
-@media(max-width: 640px){
+@media(max-width: 960px){
 
   .uk-table-small td, .uk-table-small th{
     padding-left: 5px;

@@ -105,7 +105,7 @@ class Header extends Component {
                   Dotaznik
                 </a>
 
-                <ul className="uk-navbar-nav uk-visible@s">
+                <ul className="uk-navbar-nav uk-visible@m">
                   {menu.map((link, index) => (
                     <li key={index}>
                       <Link  to={link.to}>{link.text}</Link>
@@ -113,7 +113,7 @@ class Header extends Component {
                   ))}
                 </ul>
               </div>
-              <div className="uk-navbar-right uk-visible@s">
+              <div className="uk-navbar-right uk-visible@m">
                 <ul className="uk-navbar-nav">
                   <li>
                     <a href="/">
@@ -138,7 +138,7 @@ class Header extends Component {
             </div>
           </div>
         </header>
-        <div className="controlPanel uk-hidden@s" >
+        <div className="controlPanel uk-hidden@m" >
           <ul>
             {menu.map((link, index) => (
               <li key={index}>
