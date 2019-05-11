@@ -79,7 +79,9 @@ export default class Routes extends Component {
         <AuthentticatedRoute exact path="/tests/:user" component={Tests} />
         <AuthentticatedRoute exact path="/tests/pacient/:id" component={Test} />
         <AuthentticatedRoute exact path="/results/pacient" component={Results} />
+        <AuthentticatedRoute exact path="/doctor/results/:id" component={Results} />
         <AuthentticatedRoute exact path="/view/results/:id" component={ResultsView} />
+        <AuthentticatedRoute exact path="/view/results/:id/:type" component={ResultsView} />
 
         <DoctorRoute exact path="/list/all/:user" component={List} />
         <DoctorRoute exact path="/add/:typeUser" component={Add} />

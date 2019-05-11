@@ -14,7 +14,6 @@ questionsRoutes.route("/").get(function(req, res) {
 
 questionsRoutes.route("/:id").get(function(req, res) {
   let id = req.params.id;
-  console.log(id);
   Questions.findById(id, function(err, data) {
     if (err) {
       console.log(err);

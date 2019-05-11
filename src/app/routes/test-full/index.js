@@ -53,15 +53,14 @@ export default class TestFull extends Component {
 
   getResult = (resData, currentUser) => {
     resData.map(
-      data =>
-        !data.done && data.userId === currentUser._id
-          ? this.setState({
-              resultId: data._id,
-              currentAsk: data.currentAsk,
-              idTest: data.idTest,
-              answers: data.answers
-            })
-          : false
+      data => !data.done && data.userId === currentUser._id
+        ? this.setState({
+            resultId: data._id,
+            currentAsk: data.currentAsk,
+            idTest: data.idTest,
+            answers: data.answers
+          })
+        : false
     );
   };
 
@@ -72,26 +71,14 @@ export default class TestFull extends Component {
     );
 
     var now = new Date();
-    var date =
-      now.getDate() +
-      "." +
-      now.getMonth() +
-      "." +
-      now.getFullYear() +
-      " " +
-      now.getHours() +
-      ":" +
-      now.getMinutes();
+    var date = now.getDate() + "." + now.getMonth() + "." + now.getFullYear() + " " + now.getHours() + ":" + now.getMinutes();
 
     if (e === "next") {
-      this.setState(
-        {
+      this.setState({
           currentAsk: this.state.currentAsk + 1,
           answers: answers,
           date: date
-        },
-        () => console.log("next update state!")
-      );
+        });
     } else {
       this.setState({
         answers: answers,
@@ -101,13 +88,10 @@ export default class TestFull extends Component {
   };
 
   onPrev = e => {
-    this.setState(
-      {
+    this.setState({
         currentAsk: this.state.currentAsk - 1,
         prev: true
-      },
-      () => console.log("prev curretn decrement")
-    );
+      });
   };
 
   onNext = async e => {
@@ -161,32 +145,21 @@ export default class TestFull extends Component {
 
     var data = this.sendObjectData(this.state, true);
 
-    await axios
-      .get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
-      .then(
-        res =>
-          res.data
-            ? res.data.map(
-                item =>
-                  !item.done && data.userId === item.userId
-                    ? (this.setState({
-                        resultId: item._id,
-                        currentAsk: item.currentAsk,
-                        idTest: item.idTest,
-                        answers: item.answers
-                      }),
-                      axios
-                        .post(
-                          "https://server.dotaznik.hardart.cz/result/update/" + item._id,
-                          data
-                        )
-                        .then(
-                          () => (window.location.href = "/results/pacient")
-                        ))
-                    : false
-              )
-            : false
-      );
+    await axios.get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
+              .then(res => res.data
+                ? res.data.map(item => !item.done && data.userId === item.userId
+                  ? (this.setState({
+                      resultId: item._id,
+                      currentAsk: item.currentAsk,
+                      idTest: item.idTest,
+                      answers: item.answers
+                    }),
+                    axios.post("https://server.dotaznik.hardart.cz/result/update/" + item._id, data)
+                      .then(
+                        () => (window.location.href = "/results/pacient")
+                      )) : false
+                ) : false
+              );
   };
 
   sendObjectData = (state, done) => {
@@ -250,11 +223,11 @@ export default class TestFull extends Component {
         <div className="uk-container">
           <div className="uk-grid uk-child-width-1-1" uk-grid="">
             <div>
-              <h1 className="uk-heading-divider uk-text-center">
+              <h1 className="uk-heading-divider uk-text-center uk-margin-remove-bottom">
                 {test.nameTest}
               </h1>
 
-              <h3 className="uk-heading-divider">
+              <h3 className="uk-heading-divider uk-margin-small-top">
                 {test.questions
                   ? test.questions[currentAsk].nameQuestion
                   : false}

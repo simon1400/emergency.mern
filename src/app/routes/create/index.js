@@ -6,6 +6,8 @@ export default class Create extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      validQuestName: false,
+      validAskName: false,
       nameTest: "",
       currentQuestion: 0,
       questions: [
@@ -27,13 +29,11 @@ export default class Create extends Component {
 
   componentDidMount() {
     if (this.props.match.params.id) {
-      axios
-        .get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
+      axios.get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
         .then(res => {
           this.setState({
             ...res.data
           });
-          console.log();
         });
     }
   }
@@ -41,15 +41,17 @@ export default class Create extends Component {
   handleChange = e => {
     var questions = this.state.questions;
     if (["nameAsk", "valueAsk"].includes(e.target.name)) {
-      questions[e.target.dataset.countparent].asks[e.target.dataset.countitem][
-        e.target.name
-      ] = e.target.value;
-      this.setState({ questions });
-    } else if (
-      ["nameQuestion", "descriptionQuestion"].includes(e.target.name)
-    ) {
+      questions[e.target.dataset.countparent].asks[e.target.dataset.countitem][e.target.name] = e.target.value;
+      this.setState({
+        validAskName: false,
+        questions
+      });
+    } else if (["nameQuestion", "descriptionQuestion"].includes(e.target.name)) {
       questions[e.target.dataset.countquestion][e.target.name] = e.target.value;
-      this.setState({ questions });
+      this.setState({
+        validQuestName: false,
+        questions
+      });
     } else {
       this.setState({ [e.target.name]: e.target.value });
     }
@@ -58,9 +60,7 @@ export default class Create extends Component {
   toggleDescription = e => {
     e.preventDefault();
     let questions = this.state.questions;
-    questions[e.target.dataset.countquestions].descriptionShow = !questions[
-      e.target.dataset.countquestions
-    ].descriptionShow;
+    questions[e.target.dataset.countquestions].descriptionShow = !questions[e.target.dataset.countquestions].descriptionShow;
     this.setState({
       questions
     });
@@ -68,37 +68,80 @@ export default class Create extends Component {
 
   addQuestion = e => {
     e.preventDefault();
-    if (this.state.currentQuestion + 1 < this.state.questions.length) {
+
+    var questions = this.state.questions;
+    var currentQuestion = this.state.currentQuestion
+    var lastAsk = questions[currentQuestion].asks.length - 1;
+
+    if(Boolean(questions[currentQuestion].nameQuestion) && Boolean(questions[currentQuestion].asks[lastAsk].nameAsk)){
+      if (this.state.currentQuestion + 1 < this.state.questions.length) {
+        this.setState({
+          currentQuestion: this.state.currentQuestion + 1
+        });
+      } else {
+        this.setState(prevState => ({
+          questions: [
+            ...prevState.questions,
+            {
+              nameQuestion: "",
+              descriptionQuestion: "",
+              descriptionShow: false,
+              countAsk: 1,
+              asks: [
+                {
+                  nameAsk: "",
+                  valueAsk: 0
+                }
+              ]
+            }
+          ],
+          currentQuestion: prevState.currentQuestion + 1
+        }));
+      }
+    }else if(Boolean(questions[currentQuestion].nameQuestion)){
       this.setState({
-        currentQuestion: this.state.currentQuestion + 1
-      });
-    } else {
-      this.setState(prevState => ({
-        questions: [
-          ...prevState.questions,
-          {
-            nameQuestion: "",
-            descriptionQuestion: "",
-            descriptionShow: false,
-            countAsk: 1,
-            asks: [
-              {
-                nameAsk: "",
-                valueAsk: 0
-              }
-            ]
-          }
-        ],
-        currentQuestion: prevState.currentQuestion + 1
-      }));
+        validAskName: true
+      })
+    }else if(Boolean(questions[currentQuestion].asks[lastAsk].nameAsk)){
+      this.setState({
+        validQuestName: true
+      })
+    }else{
+      this.setState({
+        validAskName: true,
+        validQuestName: true
+      })
     }
+
   };
 
   prevQuestion = e => {
     e.preventDefault();
-    this.setState({
-      currentQuestion: this.state.currentQuestion - 1
-    });
+
+    var questions = this.state.questions;
+    var currentQuestion = this.state.currentQuestion
+    var lastAsk = questions[currentQuestion].asks.length - 1;
+    
+    if(Boolean(questions[currentQuestion].nameQuestion) && Boolean(questions[currentQuestion].asks[lastAsk].nameAsk)){
+      this.setState({
+        currentQuestion: this.state.currentQuestion - 1,
+        validQuestName: false,
+        validAskName: false
+      });
+    }else if(Boolean(questions[currentQuestion].nameQuestion)){
+      this.setState({
+        validAskName: true
+      })
+    }else if(Boolean(questions[currentQuestion].asks[lastAsk].nameAsk)){
+      this.setState({
+        validQuestName: true
+      })
+    }else{
+      this.setState({
+        validAskName: true,
+        validQuestName: true
+      })
+    }
   };
 
   addAsk = e => {
@@ -114,16 +157,21 @@ export default class Create extends Component {
     });
   };
 
+  deleteQuestion = e => {
+    e.preventDefault();
+    let questions = this.state.questions;
+    questions.pop()
+    this.setState({
+      currentQuestion: this.state.currentQuestion - 1,
+      questions
+    })
+  }
+
   deleteAsk = e => {
     e.preventDefault();
     let questions = this.state.questions;
-    questions[e.currentTarget.dataset.countparent].countAsk =
-      questions[e.currentTarget.dataset.countparent].countAsk - 1;
-    for (
-      var i = 0;
-      i < questions[e.currentTarget.dataset.countparent].asks.length;
-      i++
-    ) {
+    questions[e.currentTarget.dataset.countparent].countAsk = questions[e.currentTarget.dataset.countparent].countAsk - 1;
+    for (var i = 0; i < questions[e.currentTarget.dataset.countparent].asks.length; i++) {
       if (i === parseInt(e.currentTarget.dataset.index)) {
         questions[e.currentTarget.dataset.countparent].asks.splice(i, 1);
       }
@@ -137,18 +185,11 @@ export default class Create extends Component {
     e.preventDefault();
 
     if (this.props.match.params.id) {
-      axios
-        .post(
-          "https://server.dotaznik.hardart.cz/admin/test/update/" +
-            this.props.match.params.id,
-          this.state
-        )
+      axios.post("https://server.dotaznik.hardart.cz/admin/test/update/" + this.props.match.params.id, this.state)
         .then(res => window.location.href = "/tests/admin");
     } else {
-      axios
-        .post("https://server.dotaznik.hardart.cz/admin/test/create", this.state)
+      axios.post("https://server.dotaznik.hardart.cz/admin/test/create", this.state)
         .then(res => {
-          console.log(res);
           window.location.href = "/tests/admin"
         });
     }
@@ -162,7 +203,7 @@ export default class Create extends Component {
             <div>
               <form>
                 <fieldset className="uk-fieldset">
-                  <legend className="uk-legend">Nazev otaznika</legend>
+                  <legend className="uk-legend">Questionnaire name</legend>
 
                   <div className="uk-margin">
                     <input
@@ -170,7 +211,7 @@ export default class Create extends Component {
                       onChange={this.handleChange}
                       name="nameTest"
                       type="text"
-                      placeholder="Nazev"
+                      placeholder="Name"
                       value={this.state.nameTest}
                     />
                   </div>
@@ -178,21 +219,26 @@ export default class Create extends Component {
                   <hr />
 
                   <h3 className="uk-legend">
-                    Otazka {this.state.currentQuestion + 1}
+                    Question {this.state.currentQuestion + 1}
+                    {this.state.currentQuestion === this.state.questions.length - 1 ? <a
+                      nohref=""
+                      data-countparent={this.state.currentQuestion}
+                      onClick={this.deleteQuestion}
+                      className="uk-margin-left uk-align-right"
+                    >
+                      <span className="uk-text-danger" uk-icon="icon: close; ratio: 2" />
+                  </a> : ''}
                   </h3>
 
                   <div className="uk-margin">
                     <input
-                      className="uk-input"
+                      className={`uk-input ${this.state.validQuestName ? 'uk-form-danger' : ''}`}
                       type="text"
                       name="nameQuestion"
                       onChange={this.handleChange}
                       data-countquestion={this.state.currentQuestion}
-                      placeholder="Otazka"
-                      value={
-                        this.state.questions[this.state.currentQuestion]
-                          .nameQuestion
-                      }
+                      placeholder="Question"
+                      value={this.state.questions[this.state.currentQuestion].nameQuestion}
                     />
                   </div>
 
@@ -201,7 +247,6 @@ export default class Create extends Component {
                     data-countquestions={this.state.currentQuestion}
                     onClick={this.toggleDescription}
                   >
-                    {" "}
                     + Add description
                   </button>
 
@@ -228,7 +273,7 @@ export default class Create extends Component {
 
                   <hr />
 
-                  <h3 className="uk-legend">Odpoved</h3>
+                <h3 className="uk-legend">Answers:</h3>
                   {this.state.questions[this.state.currentQuestion].asks.map(
                     (ask, index) => (
                       <div
@@ -238,13 +283,13 @@ export default class Create extends Component {
                       >
                         <div className="uk-width-4-5@s uk-width-1-1">
                           <input
-                            className="uk-input"
+                            className={`uk-input ${this.state.validAskName ? 'uk-form-danger' : ''}`}
                             type="text"
                             onChange={this.handleChange}
                             name="nameAsk"
                             data-countparent={this.state.currentQuestion}
                             data-countitem={index}
-                            placeholder="Odpoved"
+                            placeholder="Answer"
                             value={
                               this.state.questions[this.state.currentQuestion]
                                 .asks[index].nameAsk

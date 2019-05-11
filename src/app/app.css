@@ -13,16 +13,25 @@
   z-index: 100;
 }
 
-.uk-modal-close-default:hover:before {
-  display: none;
-}
 
-.uk-modal-close-default:hover svg {
+.uk-modal-close-default li:last-child:hover svg {
   fill: red;
 }
 
-.uk-modal-close-default:hover polyline {
+.uk-modal-close-default li:last-child:hover polyline {
   stroke: red !important;
+}
+
+.uk-modal-close-default li:first-child:hover svg {
+  fill: blue;
+}
+
+.uk-modal-close-default li:first-child:hover path {
+  fill: blue;
+}
+
+.uk-modal-close-default li:first-child:hover polyline {
+  stroke: blue !important;
 }
 
 .tm-modal {
@@ -77,6 +86,11 @@ body{
   padding-top: 15px;
   padding-left: 5px;
   padding-right: 5px;
+}
+
+.uk-logo, .uk-logo img{
+  height: 70px;
+  max-height: 100%;
 }
 
 @media(max-width: 960px){

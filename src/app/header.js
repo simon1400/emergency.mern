@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { logoutUser } from "../modules/auth";
+import logo from './assets/logo-removebg.png'
 
 const adminLinks = [
   {
     to: "/tests/admin",
-    text: "All tests",
+    text: "Tests",
     type: "admin",
     icon: 'list'
   },
@@ -19,7 +20,7 @@ const adminLinks = [
   },
   {
     to: "/list/all/doctor",
-    text: "Lists doctors",
+    text: "List of doctors",
     type: "admin",
     icon: 'users'
   }
@@ -27,11 +28,17 @@ const adminLinks = [
 
 const doctorLinks = [
   {
+    to: "/tests/doctor",
+    text: "Tests",
+    type: "doctor",
+    icon: 'list'
+  },
+  {
     to: "/list/all/pacient",
-    text: "Lists pacient",
+    text: "Lists of pacient",
     type: "doctor",
     icon: 'users'
-  },
+  }
 ];
 
 const pacientLinks = [
@@ -56,7 +63,7 @@ class Header extends Component {
       menu: [
         {
           to: "/",
-          text: "Homepage",
+          text: "Home",
           type: "all",
           icon: 'home'
         }
@@ -102,7 +109,7 @@ class Header extends Component {
             <div className="uk-container" uk-navbar="">
               <div className="uk-navbar-left">
                 <a className="uk-navbar-item uk-logo uk-preserve-color" href="/">
-                  Dotaznik
+                  <img src={logo} alt="Logotype" />
                 </a>
 
                 <ul className="uk-navbar-nav uk-visible@m">

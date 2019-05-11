@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import Page from "../../components/page";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
 import UIkit from 'uikit';
 
 export default class Create extends Component {
@@ -105,20 +104,20 @@ export default class Create extends Component {
                 className="uk-button uk-button-primary uk-width-1-1 tm-equal-height"
                 to={`/add/${this.props.match.params.user}`}
               >
-                Pridat {this.props.match.params.user}a
+                Add {this.props.match.params.user}
               </Link>
             </div>
           </div>
         </div>
         <div className="uk-container">
           <div className="uk-grid uk-child-width-1-1" uk-grid="">
-            <div classNmae="uk-overflow-auto">
+            <div className="uk-overflow-auto">
               <table className="uk-table uk-table-striped uk-table-hover uk-table-small uk-table-divider uk-margin-bottom">
                 <thead>
                   <tr>
-                    <th className="uk-visible@s">Jmeno</th>
-                    <th>Prijmeni</th>
-                    <th>Rodne cislo</th>
+                    <th className="uk-visible@s">Name</th>
+                    <th>Surname</th>
+                    <th>ID number</th>
                     <th className="uk-text-right">Options</th>
                   </tr>
                 </thead>
@@ -133,11 +132,9 @@ export default class Create extends Component {
                           <ul className="uk-iconnav uk-flex-right">
                             {this.props.match.params.user === "pacient" ? (
                               <li>
-                                <button
-                                  name={item._id}
-                                  onClick={this.onDelete}
-                                />
-                                <span nohref="true" uk-icon="icon: info" />
+                                <Link to={`/doctor/results/${item._id}`} name={item._id}>
+                                  <span nohref="true" uk-icon="icon: info" />
+                                </Link>
                               </li>
                             ) : (
                               false
@@ -159,7 +156,7 @@ export default class Create extends Component {
                   ) : (
                     <tr>
                       <td colSpan="4">
-                        <h3 className="uk-text-center">Nic nenalezeno</h3>
+                        <h3 className="uk-text-center">List is empty</h3>
                       </td>
                     </tr>
                   )}

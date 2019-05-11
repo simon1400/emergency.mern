@@ -22,7 +22,6 @@ self.addEventListener('activate', event => {
 
 // 'install' вызывается, как только пользователь впервые открывает PWA
 self.addEventListener('install', function(event) {
-  console.log('get install');
    if (doCache) {
        event.waitUntil(
            caches.open(CACHE_NAME)

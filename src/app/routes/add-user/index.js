@@ -98,7 +98,7 @@ export default class Create extends Component {
             <form className="uk-form-stacked" autoComplete="off">
               <div className="uk-margin">
                 <label className="uk-form-label" htmlFor="form-stacked-text">
-                  Jmeno
+                  Name
                 </label>
                 <div className="uk-form-controls">
                   <input
@@ -108,14 +108,14 @@ export default class Create extends Component {
                     name="name"
                     onChange={this.handleChange}
                     type="text"
-                    placeholder="Jmeno"
+                    placeholder="Name"
                   />
                 </div>
               </div>
 
               <div className="uk-margin">
                 <label className="uk-form-label" htmlFor="form-stacked-text">
-                  Prijmeni
+                  Surname
                 </label>
                 <div className="uk-form-controls">
                   <input
@@ -124,14 +124,14 @@ export default class Create extends Component {
                     type="text"
                     name="surname"
                     onChange={this.handleChange}
-                    placeholder="Prijmeni"
+                    placeholder="Surname"
                   />
                 </div>
               </div>
 
               <div className="uk-margin">
                 <label className="uk-form-label" htmlFor="form-stacked-text">
-                  Rodne cislo
+                  ID Number
                 </label>
                 <div className="uk-form-controls">
                   <input
@@ -141,14 +141,14 @@ export default class Create extends Component {
                     name="rodneCislo"
                     autoComplete="off"
                     onChange={this.handleChange}
-                    placeholder="Rodne cislo"
+                    placeholder="ID Number"
                   />
                 </div>
               </div>
 
               <div className="uk-margin">
                 <label className="uk-form-label" htmlFor="form-stacked-text">
-                  Heslo
+                  Password
                 </label>
                 <div className="uk-form-controls">
                   <input
@@ -160,7 +160,7 @@ export default class Create extends Component {
                     autoComplete="off"
                     name="password"
                     onChange={this.handleChange}
-                    placeholder="Heslo"
+                    placeholder="Password"
                   />
                 </div>
               </div>
@@ -178,7 +178,7 @@ export default class Create extends Component {
                 className="uk-button uk-button-primary"
                 onClick={this.onSubmit}
               >
-                Ulozit
+                Save
               </button>
             </form>
           </div>
