@@ -13,7 +13,7 @@ export default class TestFull extends Component {
   componentDidMount() {
     if(this.props.match.params.type){
       axios
-        .get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
+        .get("http://967a6564.ngrok.io/admin/test/" + this.props.match.params.id)
         .then(res => {
           console.log(res.data);
           this.setState({
@@ -22,7 +22,7 @@ export default class TestFull extends Component {
         });
     }else{
       axios
-        .get("https://server.dotaznik.hardart.cz/result/" + this.props.match.params.id)
+        .get("http://967a6564.ngrok.io/result/" + this.props.match.params.id)
         .then(res => {
           this.setState({
             test: res.data

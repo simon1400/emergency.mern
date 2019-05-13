@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import Page from "../../components/page";
 import axios from "axios";
 
-
 import Tests from "./tests";
 
 export default class Create extends Component {
@@ -41,7 +40,7 @@ export default class Create extends Component {
   }
 
   loadData = id => {
-    axios.get("https://server.dotaznik.hardart.cz/admin/user/" + id).then(res =>
+    axios.get("http://967a6564.ngrok.io/admin/user/" + id).then(res =>
       this.setState({
         name: res.data.name,
         surname: res.data.surname,
@@ -74,7 +73,7 @@ export default class Create extends Component {
     if (this.props.match.params.id) {
       axios
         .post(
-          "https://server.dotaznik.hardart.cz/admin/user/update/" +
+          "http://967a6564.ngrok.io/admin/user/update/" +
             this.props.match.params.id,
           this.state
         )
@@ -83,7 +82,7 @@ export default class Create extends Component {
         });
     } else {
       axios
-        .post("https://server.dotaznik.hardart.cz/admin/user/create", this.state)
+        .post("http://967a6564.ngrok.io/admin/user/create", this.state)
         .then(res => {
           window.location.href = "/list/all/" + this.state.typeUser;
         });

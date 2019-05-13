@@ -2,9 +2,6 @@ import React, { Component } from "react";
 import Page from "../../components/page";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import UIkit from 'uikit'
-
-window.UIkit = UIkit;
 
 export default class Create extends Component {
   constructor(props) {
@@ -16,25 +13,31 @@ export default class Create extends Component {
 
   componentDidMount() {
     if (this.props.match.params.user === "admin" || this.props.match.params.user === "doctor") {
-      axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
+      axios.get("http://967a6564.ngrok.io/admin/test").then(res => {
         this.setState({
           tests: res.data
         });
       });
     } else if (this.props.match.params.user === "pacient") {
-      let currentUser = JSON.parse(localStorage.getItem("user"));
-      var currentTests = [];
-      axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
-        currentUser.selectTest.map(selectItem =>
-          res.data.map(
-            testItem =>
-              selectItem === testItem._id ? currentTests.push(testItem) : false
-          )
-        );
-        this.setState({
-          tests: currentTests
+      if(navigator.onLine){
+        let currentUser = JSON.parse(localStorage.getItem("user"));
+        var currentTests = [];
+        axios.get("http://967a6564.ngrok.io/admin/test").then(res => {
+          currentUser.selectTest.map(selectItem =>
+            res.data.map(
+              testItem =>
+                selectItem === testItem._id ? currentTests.push(testItem) : false
+            )
+          );
+          this.setState({
+            tests: currentTests
+          });
         });
-      });
+      }else{
+        this.setState({
+          tests: JSON.parse(localStorage.getItem("tests"))
+        });
+      }
     }
   }
 
@@ -43,13 +46,13 @@ export default class Create extends Component {
     var saveTarget = e.currentTarget;
      e.currentTarget.blur();
     let tests = this.state.tests;
-    UIkit.modal.confirm('Do you really want to delete this test?').then(function () {
+    window.UIkit.modal.confirm('Do you really want to delete this test?').then(function () {
 
       for (var i = 0; i < tests.length; i++) {
         if (tests[i]._id === saveTarget.dataset.name) tests.splice(i, 1);
       }
 
-      axios.delete("https://server.dotaznik.hardart.cz/admin/test/delete/" + saveTarget.dataset.name);
+      axios.delete("http://967a6564.ngrok.io/admin/test/delete/" + saveTarget.dataset.name);
     }, function () {
         console.log('Rejected.')
     }).then(() => {

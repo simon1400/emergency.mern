@@ -22,44 +22,86 @@ export default class TestFull extends Component {
 
   componentDidMount() {
     let currentUser = JSON.parse(localStorage.getItem("user"));
+    var allTests = JSON.parse(localStorage.getItem("tests"));
+    var allResults = JSON.parse(localStorage.getItem("results"));
 
-    axios
-      .get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
-      .then(res => {
-        this.setState({
-          test: res.data
+    if(navigator.onLine){
+      axios.get("http://967a6564.ngrok.io/admin/test/" + this.props.match.params.id)
+        .then(res => {
+          this.setState({
+            test: res.data
+          });
         });
-      });
 
-    axios
-      .get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
-      .then(
-        res =>
-          res.data
-            ? (this.setState({
-                userId: currentUser._id,
-                resultId: "",
-                currentAsk: 0,
-                answers: [],
-                checkedName: "",
-                checkedBody: "",
-                date: "",
-                done: false
-              }),
-              this.getResult(res.data, currentUser))
-            : false
-      );
+      axios.get("http://967a6564.ngrok.io/result/all/" + this.props.match.params.id)
+        .then(res =>
+            res.data
+              ? (this.setState({
+                  userId: currentUser._id,
+                  resultId: "",
+                  currentAsk: 0,
+                  answers: [],
+                  checkedName: "",
+                  checkedBody: "",
+                  date: "",
+                  done: false
+                }),
+                this.getResult(res.data, currentUser, true))
+              : false
+        );
+    }else{
+      allTests.map(item => {
+        if(item._id === this.props.match.params.id){
+          this.setState({
+            test: item
+          });
+        }
+      })
+      allResults.map(item => {
+        if(item.idTest === this.props.match.params.id){
+          this.setState({
+            userId: currentUser._id,
+            resultId: "",
+            currentAsk: 0,
+            answers: [],
+            checkedName: "",
+            checkedBody: "",
+            date: "",
+            done: false
+          })
+          this.getResult(item, currentUser)
+        }
+      })
+    }
   }
 
-  getResult = (resData, currentUser) => {
-    resData.map(
-      data => !data.done && data.userId === currentUser._id
-        ? this.setState({
-            resultId: data._id,
-            currentAsk: data.currentAsk,
-            idTest: data.idTest,
-            answers: data.answers
-          })
+  getResult = (resData, currentUser, online) => {
+    var allResults = JSON.parse(localStorage.getItem("results"));
+    resData.map(data =>
+      !data.done && data.userId === currentUser._id
+        ? online
+          ? allResults.map((result, index) => {
+              if(result.dateUpdate <= data.dateUpdate){
+                console.log('local mense!');
+                this.setState({
+                  resultId: data._id,
+                  currentAsk: data.currentAsk,
+                  idTest: data.idTest,
+                  answers: data.answers
+                })
+                allResults[index] = data;
+                localStorage.setItem("results", JSON.stringify(allResults))
+              }else{
+                console.log('local bolse');
+                axios.post("http://967a6564.ngrok.io/result/update/" + result._id, result);
+              }
+            })
+          : this.setState({
+              resultId: data._id,
+              currentAsk: data.currentAsk,
+              idTest: data.idTest,
+              answers: data.answers
+            })
         : false
     );
   };
@@ -96,13 +138,19 @@ export default class TestFull extends Component {
 
   onNext = async e => {
     let currentUser = JSON.parse(localStorage.getItem("user"));
-
+    var allResults;
     if (!this.state.prev && !this.state.resultId) {
-      await axios
-        .get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
-        .then(
-          res => (res.data ? this.getResult(res.data, currentUser) : false)
-        );
+      if(navigator.onLine){
+        await axios.get("http://967a6564.ngrok.io/result/all/" + this.props.match.params.id)
+          .then(res => (res.data ? this.getResult(res.data, currentUser, true) : false));
+      }else{
+        allResults = JSON.parse(localStorage.getItem("results"));
+        allResults.map(item => {
+          if(item.idTest === this.props.match.params.id){
+            this.getResult(item, currentUser)
+          }
+        })
+      }
     }
 
     await this.updateAnswers("next");
@@ -110,34 +158,51 @@ export default class TestFull extends Component {
     var data = this.sendObjectData(this.state, false);
 
     if (this.state.currentAsk === 1 && !this.state.resultId) {
-      await axios
-        .post("https://server.dotaznik.hardart.cz/result/create/", data)
-        .then(res => console.log("create data next!"));
+      if(navigator.onLine){
+        await axios.post("http://967a6564.ngrok.io/result/create/", data);
+      }else{
+        allResults = JSON.parse(localStorage.getItem("results"));
+        allResults.push(data);
+        localStorage.setItem("results", JSON.stringify(allResults))
+      }
     }
 
     if (this.state.currentAsk && this.state.resultId) {
-      await axios
-        .get("https://server.dotaznik.hardart.cz/result/" + this.state.resultId)
-        .then(res => {
-          var data = res.data[0];
-          if (data && !data.done) {
-            this.setState({
-              resultId: data._id,
-              currentAsk: data.currentAsk,
-              idTest: data.idTest,
-              answers: data.answers
-            });
+      if(navigator.onLine){
+        await axios.get("http://967a6564.ngrok.io/result/" + this.state.resultId)
+          .then(res => {
+            var data = res.data[0];
+            if (data && !data.done) {
+              this.setState({
+                resultId: data._id,
+                currentAsk: data.currentAsk,
+                idTest: data.idTest,
+                answers: data.answers
+              });
+            }
+          }).then(() => {
+            axios.post("http://967a6564.ngrok.io/result/update/" + this.state.resultId, data);
+          });
+      }else{
+        allResults = JSON.parse(localStorage.getItem("results"));
+        allResults.map((item, index) => {
+          if(item._id === this.state.resultId){
+            if (item && !item.done) {
+              this.setState({
+                resultId: item._id,
+                currentAsk: item.currentAsk,
+                idTest: item.idTest,
+                answers: item.answers
+              });
+            }
+            allResults[index] = data;
+            localStorage.setItem("results", JSON.stringify(allResults))
           }
         })
-        .then(() => {
-          axios
-            .post(
-              "https://server.dotaznik.hardart.cz/result/update/" + this.state.resultId,
-              data
-            )
-            .then(console.log("update next"));
-        });
+
+      }
     }
+
   };
 
   onFinish = async () => {
@@ -145,21 +210,37 @@ export default class TestFull extends Component {
 
     var data = this.sendObjectData(this.state, true);
 
-    await axios.get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
-              .then(res => res.data
-                ? res.data.map(item => !item.done && data.userId === item.userId
-                  ? (this.setState({
-                      resultId: item._id,
-                      currentAsk: item.currentAsk,
-                      idTest: item.idTest,
-                      answers: item.answers
-                    }),
-                    axios.post("https://server.dotaznik.hardart.cz/result/update/" + item._id, data)
-                      .then(
-                        () => (window.location.href = "/results/pacient")
-                      )) : false
-                ) : false
-              );
+    if(navigator.onLine){
+      await axios.get("http://967a6564.ngrok.io/result/all/" + this.props.match.params.id)
+                .then(res => res.data
+                  ? res.data.map(item => !item.done && data.userId === item.userId
+                    ? (this.setState({
+                        resultId: item._id,
+                        currentAsk: item.currentAsk,
+                        idTest: item.idTest,
+                        answers: item.answers
+                      }),
+                      axios.post("http://967a6564.ngrok.io/result/update/" + item._id, data)
+                        .then(() => (window.location.href = "/results/pacient")
+                        )) : false
+                  ) : false
+                );
+    }else{
+      var allResults = JSON.parse(localStorage.getItem("results"));
+      allResults.map((item, index) => !item.done && data.userId === item.userId
+          ? (this.setState({
+              resultId: item._id,
+              currentAsk: item.currentAsk,
+              idTest: item.idTest,
+              answers: item.answers
+            }),
+            allResults[index] = data,
+            localStorage.setItem("results", JSON.stringify(allResults)),
+            window.location.href = "/results/pacient"
+          ) : false
+        )
+    }
+
   };
 
   sendObjectData = (state, done) => {
@@ -170,7 +251,8 @@ export default class TestFull extends Component {
       answers: state.answers,
       date: state.date,
       done: done,
-      userId: state.userId
+      userId: state.userId,
+      dateUpdate: Date.now()
     };
 
     return data;
@@ -194,18 +276,8 @@ export default class TestFull extends Component {
       checkedValue: value,
       checkedBody: body
     };
-    if (
-      answers.find(
-        x =>
-          x.nameAsk ===
-          this.state.test.questions[this.state.currentAsk].nameQuestion
-      )
-    ) {
-      index = answers.findIndex(
-        x =>
-          x.nameAsk ===
-          this.state.test.questions[this.state.currentAsk].nameQuestion
-      );
+    if (answers.find(x => x.nameAsk === this.state.test.questions[this.state.currentAsk].nameQuestion)) {
+      index = answers.findIndex(x => x.nameAsk === this.state.test.questions[this.state.currentAsk].nameQuestion);
       answers[index] = answer;
     } else {
       answers.push(answer);

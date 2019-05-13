@@ -20,7 +20,7 @@ class Login extends Component {
 
   login = (e, rodneCislo, password) => {
     e.preventDefault()
-    axios.get("https://server.dotaznik.hardart.cz/admin/user/login/" + rodneCislo + "/" + password)
+    axios.get("http://967a6564.ngrok.io/admin/user/login/" + rodneCislo + "/" + password)
       .then(res => {
         if(res.data === 'errorpassword' || res.data === 'errorlogin'){
           this.setState({
@@ -45,12 +45,12 @@ class Login extends Component {
       <Page id="login" title="Login" description="We need to log in to stuff.">
         <div id="modal-close-default" className="tm-modal" uk-modal="">
           <div className="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-text-center">
-            <h2 className="uk-modal-title">Prihalseni</h2>
+            <h2 className="uk-modal-title">Sing in</h2>
             <hr />
 
             <form className="uk-form-stacked">
               {this.state.error ? <div className="uk-alert-danger" uk-alert="">
-                  <p>Zadali jste chybné přihlašovací údaje</p>
+                  <p>Error login or password</p>
                 </div>
               : ''}
 
@@ -61,7 +61,7 @@ class Login extends Component {
                     onChange={this.handleChange}
                     name="rodneCislo"
                     type="text"
-                    placeholder="Rodne cislo"
+                    placeholder="ID Number"
                   />
                 </div>
               </div>
@@ -75,7 +75,7 @@ class Login extends Component {
                     readOnly={this.state.readPassword}
                     onFocus={(e) => this.setState({readPassword: false})}
                     type="password"
-                    placeholder="Heslo"
+                    placeholder="Password"
                   />
                 </div>
               </div>

@@ -2,10 +2,8 @@ import React, { Component } from "react";
 import Page from "../../components/page";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import XlsExport from 'xlsexport'
-import UIkit from 'uikit'
-
-window.UIkit = UIkit;
+// import XlsExport from 'xlsexport'
+// import UIkit from 'uikit'
 
 
 export default class Results extends Component {
@@ -18,15 +16,16 @@ export default class Results extends Component {
   }
 
   componentDidMount() {
+    console.log(window);
     if(this.props.match.params.id){
-      axios.get("https://server.dotaznik.hardart.cz/result/").then(res => {
+      axios.get("http://967a6564.ngrok.io/result/").then(res => {
         this.setState({
           tests: res.data.filter(item => item.userId.includes(this.props.match.params.id))
         });
       });
     }else{
       var currentUser = JSON.parse(localStorage.getItem("user"));
-      axios.get("https://server.dotaznik.hardart.cz/result/").then(res => {
+      axios.get("http://967a6564.ngrok.io/result/").then(res => {
         this.setState({
           tests: res.data.filter(item => item.userId.includes(currentUser._id))
         });
@@ -37,12 +36,12 @@ export default class Results extends Component {
   onExport = (e) => {
     e.preventDefault();
     axios
-      .get("https://server.dotaznik.hardart.cz/result/" + e.currentTarget.id)
+      .get("http://967a6564.ngrok.io/result/" + e.currentTarget.id)
       .then(res => {
 
 
         axios
-          .get("https://server.dotaznik.hardart.cz/admin/user/" + res.data.userId)
+          .get("http://967a6564.ngrok.io/admin/user/" + res.data.userId)
           .then((newRes) => {
             let xmlData = {
               "Name pacient": newRes.data.name,
@@ -55,8 +54,8 @@ export default class Results extends Component {
               xmlData[item.nameAsk] = item.checkedValue
             ))
             console.log(xmlData);
-            var xls = new XlsExport([xmlData]);
-            xls.exportToXLS('dotaznik.xls')
+            // var xls = new XlsExport([xmlData]);
+            // xls.exportToXLS('dotaznik.xls')
           })
 
       });
@@ -67,13 +66,13 @@ export default class Results extends Component {
     var saveTarget = e.currentTarget;
      e.currentTarget.blur();
     let tests = this.state.tests;
-    UIkit.modal.confirm('Do you really want to delete this result of test?').then(function () {
+    window.UIkit.modal.confirm('Do you really want to delete this result of test?').then(function () {
 
       for (var i = 0; i < tests.length; i++) {
         if (tests[i]._id === saveTarget.dataset.name) tests.splice(i, 1);
       }
 
-      axios.delete("https://server.dotaznik.hardart.cz/result/delete/" + saveTarget.dataset.name);
+      axios.delete("http://967a6564.ngrok.io/result/delete/" + saveTarget.dataset.name);
     }, function () {
         console.log('Rejected.')
     }).then(() => {

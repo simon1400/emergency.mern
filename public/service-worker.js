@@ -41,6 +41,7 @@ self.addEventListener('install', function(event) {
                                '/add/doctor',
                                '/create',
                                '/list/all/doctor',
+                               '/results/pacient'
                            ]
                            cache.addAll(urlsToCache)
                            console.log('cached');

@@ -29,7 +29,7 @@ export default class Create extends Component {
 
   componentDidMount() {
     if (this.props.match.params.id) {
-      axios.get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
+      axios.get("http://967a6564.ngrok.io/admin/test/" + this.props.match.params.id)
         .then(res => {
           this.setState({
             ...res.data
@@ -185,10 +185,10 @@ export default class Create extends Component {
     e.preventDefault();
 
     if (this.props.match.params.id) {
-      axios.post("https://server.dotaznik.hardart.cz/admin/test/update/" + this.props.match.params.id, this.state)
+      axios.post("http://967a6564.ngrok.io/admin/test/update/" + this.props.match.params.id, this.state)
         .then(res => window.location.href = "/tests/admin");
     } else {
-      axios.post("https://server.dotaznik.hardart.cz/admin/test/create", this.state)
+      axios.post("http://967a6564.ngrok.io/admin/test/create", this.state)
         .then(res => {
           window.location.href = "/tests/admin"
         });
