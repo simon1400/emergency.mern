@@ -22,12 +22,11 @@ export default class Homepage extends Component {
 
     if(navigator.onLine){
       axios.get('https://server.dotaznik.hardart.cz/homepage').then(res => {
-        this.setState({
-          head: res.data[0].head,
-          description: res.data[0].description
-        })
-        console.log(Boolean(!homepage))
         if(!homepage || homepage.dateUpdate < res.data[0].dateUpdate){
+          this.setState({
+            head: res.data[0].head,
+            description: res.data[0].description
+          })
           localStorage.setItem("homepage", JSON.stringify(res.data[0]))
         }else{
           this.setState({
