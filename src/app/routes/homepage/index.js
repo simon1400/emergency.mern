@@ -21,7 +21,7 @@ export default class Homepage extends Component {
     this.setState({typeUser: currentUser.typeUser})
 
     if(navigator.onLine){
-      axios.get('http://localhost:4000/homepage').then(res => {
+      axios.get('https://server.dotaznik.hardart.cz/homepage').then(res => {
         this.setState({
           head: res.data[0].head,
           description: res.data[0].description
@@ -34,7 +34,7 @@ export default class Homepage extends Component {
             description: homepage.description,
             dateUpdate: Date.now(),
           }
-          axios.post("http://localhost:4000/homepage/update/5cd43282836c305a14770983", updateData);
+          axios.post("https://server.dotaznik.hardart.cz/homepage/update/5cd43282836c305a14770983", updateData);
         }
       })
     }else{
@@ -55,7 +55,7 @@ export default class Homepage extends Component {
       dateUpdate: Date.now()
     })
     if(navigator.onLine){
-      await axios.post("http://localhost:4000/homepage/update/5cd43282836c305a14770983", this.state)
+      await axios.post("https://server.dotaznik.hardart.cz/homepage/update/5cd43282836c305a14770983", this.state)
         .then(res => {
           window.location.href = "/";
         });
