@@ -21,16 +21,29 @@ export default class Homepage extends Component {
     this.setState({typeUser: currentUser.typeUser})
 
     if(navigator.onLine){
+
+      // beru data z serveru
       axios.get('https://server.dotaznik.hardart.cz/homepage').then(res => {
+
+        // kontroluju je-li mam vubec data v localstorage nebo jestli
+        // je mensi timestamp v local nez na serveru
+        console.log(homepage);
         console.log(homepage.dateUpdate);
         console.log(res.data[0].dateUpdate);
+        console.log(homepage.dateUpdate <= res.data[0].dateUpdate);
         if(!homepage || homepage.dateUpdate <= res.data[0].dateUpdate){
+
+          // je v localu mensi nebo stejne timestamp jak na serveru
+          // tak aktualizuju z servera a obnovim local z servera
           this.setState({
             head: res.data[0].head,
             description: res.data[0].description
           })
           localStorage.setItem("homepage", JSON.stringify(res.data[0]))
         }else{
+
+          // kdyz mam v localu vetsi timstamp
+          // tak vemu si datu z localu a aktualizuju na serveru
           this.setState({
             head: homepage.head,
             description: homepage.description,
@@ -39,7 +52,10 @@ export default class Homepage extends Component {
           axios.post("https://server.dotaznik.hardart.cz/homepage/update/5cd43282836c305a14770983", this.state);
         }
       })
+
     }else if(!navigator.onLine){
+
+      // kdyz sem offline tak furt beru datu z localstorage
       this.setState({
         head: homepage.head,
         description: homepage.description
@@ -85,12 +101,12 @@ export default class Homepage extends Component {
         {this.state.typeUser === 'admin' ? <div className="uk-container uk-container-xsmall">
           <div className="uk-margin-top uk-grid uk-child-width-1-1" uk-grid="">
             <div>
-              <h2>Edit informace</h2>
+              <h2>Edit information</h2>
             </div>
             <form className="uk-form-stacked">
               <div className="uk-margin">
                 <label className="uk-form-label" htmlFor="form-stacked-text">
-                  Zahlavi
+                  Head
                 </label>
                 <div className="uk-form-controls">
                   <input
@@ -107,7 +123,7 @@ export default class Homepage extends Component {
 
               <div className="uk-margin">
                 <label className="uk-form-label" htmlFor="form-stacked-text">
-                  Popis
+                  Description
                 </label>
                 <textarea
                   className="uk-textarea"
