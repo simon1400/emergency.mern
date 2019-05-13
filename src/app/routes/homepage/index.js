@@ -26,15 +26,16 @@ export default class Homepage extends Component {
           head: res.data[0].head,
           description: res.data[0].description
         })
+        console.log(Boolean(!homepage))
         if(!homepage || homepage.dateUpdate < res.data[0].dateUpdate){
           localStorage.setItem("homepage", JSON.stringify(res.data[0]))
         }else{
-          let updateData = {
+          this.setState({
             head: homepage.head,
             description: homepage.description,
-            dateUpdate: Date.now(),
-          }
-          axios.post("https://server.dotaznik.hardart.cz/homepage/update/5cd43282836c305a14770983", updateData);
+            dateUpdate: Date.now()
+          })
+          axios.post("https://server.dotaznik.hardart.cz/homepage/update/5cd43282836c305a14770983", this.state);
         }
       })
     }else{
