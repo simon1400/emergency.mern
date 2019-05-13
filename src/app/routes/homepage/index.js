@@ -27,10 +27,12 @@ export default class Homepage extends Component {
 
         // kontroluju je-li mam vubec data v localstorage nebo jestli
         // je mensi timestamp v local nez na serveru
-        console.log(homepage);
-        console.log(homepage.dateUpdate);
-        console.log(res.data[0].dateUpdate);
-        console.log(homepage.dateUpdate <= res.data[0].dateUpdate);
+        if(homepage){
+          console.log(homepage);
+          console.log(homepage.dateUpdate);
+          console.log(res.data[0].dateUpdate);
+          console.log(homepage.dateUpdate <= res.data[0].dateUpdate);
+        }
         if(!homepage || homepage.dateUpdate <= res.data[0].dateUpdate){
 
           // je v localu mensi nebo stejne timestamp jak na serveru
