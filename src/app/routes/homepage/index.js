@@ -10,35 +10,37 @@ export default class Homepage extends Component {
     this.state = {
       head: '',
       description: '',
+      dateUpdate: Date.now(),
       typeUser: ''
     }
   }
 
   componentDidMount() {
+    let homepage = JSON.parse(localStorage.getItem("homepage"));
     let currentUser = JSON.parse(localStorage.getItem("user"));
-    let homedata = JSON.parse(localStorage.getItem("homepage"));
     this.setState({typeUser: currentUser.typeUser})
 
     if(navigator.onLine){
-      if(homedata){
-        axios.post("https://server.dotaznik.hardart.cz/homepage/update/5cd43282836c305a14770983", homedata)
-          .then(res => {
-            localStorage.removeItem("homepage")
-            console.log('remove localStorage homepage');
-          });
-      }
-
-      axios.get('https://server.dotaznik.hardart.cz/homepage').then(res => {
+      axios.get('http://localhost:4000/homepage').then(res => {
         this.setState({
           head: res.data[0].head,
           description: res.data[0].description
         })
-        localStorage.setItem("homepage", JSON.stringify(res.data[0]))
+        if(!homepage || homepage.dateUpdate < res.data[0].dateUpdate){
+          localStorage.setItem("homepage", JSON.stringify(res.data[0]))
+        }else{
+          let updateData = {
+            head: homepage.head,
+            description: homepage.description,
+            dateUpdate: Date.now(),
+          }
+          axios.post("http://localhost:4000/homepage/update/5cd43282836c305a14770983", updateData);
+        }
       })
     }else{
       this.setState({
-        head: homedata.head,
-        description: homedata.description
+        head: homepage.head,
+        description: homepage.description
       })
     }
   }
@@ -47,16 +49,20 @@ export default class Homepage extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  onSubmit = e => {
+  onSubmit = async e => {
     e.preventDefault();
+    await this.setState({
+      dateUpdate: Date.now()
+    })
     if(navigator.onLine){
-      axios.post("https://server.dotaznik.hardart.cz/homepage/update/5cd43282836c305a14770983", this.state)
+      await axios.post("http://localhost:4000/homepage/update/5cd43282836c305a14770983", this.state)
         .then(res => {
           window.location.href = "/";
         });
     }else{
       localStorage.setItem("homepage", JSON.stringify(this.state))
     }
+
   };
 
   render() {

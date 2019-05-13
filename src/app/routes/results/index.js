@@ -3,7 +3,10 @@ import Page from "../../components/page";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import XlsExport from 'xlsexport'
-import UIkit from 'uikit';
+import UIkit from 'uikit'
+
+window.UIkit = UIkit;
+
 
 export default class Results extends Component {
   constructor(props) {

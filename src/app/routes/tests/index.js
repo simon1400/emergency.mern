@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import Page from "../../components/page";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import UIkit from 'uikit';
+import UIkit from 'uikit'
 
+window.UIkit = UIkit;
 
 export default class Create extends Component {
   constructor(props) {
@@ -30,7 +31,6 @@ export default class Create extends Component {
               selectItem === testItem._id ? currentTests.push(testItem) : false
           )
         );
-
         this.setState({
           tests: currentTests
         });
