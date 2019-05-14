@@ -26,14 +26,14 @@ export default class TestFull extends Component {
     var allResults = JSON.parse(localStorage.getItem("results"));
 
     if(navigator.onLine){
-      axios.get("http://967a6564.ngrok.io/admin/test/" + this.props.match.params.id)
+      axios.get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
         .then(res => {
           this.setState({
             test: res.data
           });
         });
 
-      axios.get("http://967a6564.ngrok.io/result/all/" + this.props.match.params.id)
+      axios.get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
         .then(res =>
             res.data
               ? (this.setState({
@@ -93,7 +93,7 @@ export default class TestFull extends Component {
                 localStorage.setItem("results", JSON.stringify(allResults))
               }else{
                 console.log('local bolse');
-                axios.post("http://967a6564.ngrok.io/result/update/" + result._id, result);
+                axios.post("https://server.dotaznik.hardart.cz/result/update/" + result._id, result);
               }
             })
           : this.setState({
@@ -141,7 +141,7 @@ export default class TestFull extends Component {
     var allResults;
     if (!this.state.prev && !this.state.resultId) {
       if(navigator.onLine){
-        await axios.get("http://967a6564.ngrok.io/result/all/" + this.props.match.params.id)
+        await axios.get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
           .then(res => (res.data ? this.getResult(res.data, currentUser, true) : false));
       }else{
         allResults = JSON.parse(localStorage.getItem("results"));
@@ -159,7 +159,7 @@ export default class TestFull extends Component {
 
     if (this.state.currentAsk === 1 && !this.state.resultId) {
       if(navigator.onLine){
-        await axios.post("http://967a6564.ngrok.io/result/create/", data);
+        await axios.post("https://server.dotaznik.hardart.cz/result/create/", data);
       }else{
         allResults = JSON.parse(localStorage.getItem("results"));
         allResults.push(data);
@@ -169,7 +169,7 @@ export default class TestFull extends Component {
 
     if (this.state.currentAsk && this.state.resultId) {
       if(navigator.onLine){
-        await axios.get("http://967a6564.ngrok.io/result/" + this.state.resultId)
+        await axios.get("https://server.dotaznik.hardart.cz/result/" + this.state.resultId)
           .then(res => {
             var data = res.data[0];
             if (data && !data.done) {
@@ -181,7 +181,7 @@ export default class TestFull extends Component {
               });
             }
           }).then(() => {
-            axios.post("http://967a6564.ngrok.io/result/update/" + this.state.resultId, data);
+            axios.post("https://server.dotaznik.hardart.cz/result/update/" + this.state.resultId, data);
           });
       }else{
         allResults = JSON.parse(localStorage.getItem("results"));
@@ -211,7 +211,7 @@ export default class TestFull extends Component {
     var data = this.sendObjectData(this.state, true);
 
     if(navigator.onLine){
-      await axios.get("http://967a6564.ngrok.io/result/all/" + this.props.match.params.id)
+      await axios.get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
                 .then(res => res.data
                   ? res.data.map(item => !item.done && data.userId === item.userId
                     ? (this.setState({
@@ -220,7 +220,7 @@ export default class TestFull extends Component {
                         idTest: item.idTest,
                         answers: item.answers
                       }),
-                      axios.post("http://967a6564.ngrok.io/result/update/" + item._id, data)
+                      axios.post("https://server.dotaznik.hardart.cz/result/update/" + item._id, data)
                         .then(() => (window.location.href = "/results/pacient")
                         )) : false
                   ) : false

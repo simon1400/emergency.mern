@@ -18,14 +18,14 @@ export default class Results extends Component {
   componentDidMount() {
     console.log(window);
     if(this.props.match.params.id){
-      axios.get("http://967a6564.ngrok.io/result/").then(res => {
+      axios.get("https://server.dotaznik.hardart.cz/result/").then(res => {
         this.setState({
           tests: res.data.filter(item => item.userId.includes(this.props.match.params.id))
         });
       });
     }else{
       var currentUser = JSON.parse(localStorage.getItem("user"));
-      axios.get("http://967a6564.ngrok.io/result/").then(res => {
+      axios.get("https://server.dotaznik.hardart.cz/result/").then(res => {
         this.setState({
           tests: res.data.filter(item => item.userId.includes(currentUser._id))
         });
@@ -36,12 +36,12 @@ export default class Results extends Component {
   onExport = (e) => {
     e.preventDefault();
     axios
-      .get("http://967a6564.ngrok.io/result/" + e.currentTarget.id)
+      .get("https://server.dotaznik.hardart.cz/result/" + e.currentTarget.id)
       .then(res => {
 
 
         axios
-          .get("http://967a6564.ngrok.io/admin/user/" + res.data.userId)
+          .get("https://server.dotaznik.hardart.cz/admin/user/" + res.data.userId)
           .then((newRes) => {
             let xmlData = {
               "Name pacient": newRes.data.name,
@@ -72,7 +72,7 @@ export default class Results extends Component {
         if (tests[i]._id === saveTarget.dataset.name) tests.splice(i, 1);
       }
 
-      axios.delete("http://967a6564.ngrok.io/result/delete/" + saveTarget.dataset.name);
+      axios.delete("https://server.dotaznik.hardart.cz/result/delete/" + saveTarget.dataset.name);
     }, function () {
         console.log('Rejected.')
     }).then(() => {

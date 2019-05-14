@@ -20,7 +20,7 @@ class Login extends Component {
 
   login = (e, rodneCislo, password) => {
     e.preventDefault()
-    axios.get("http://967a6564.ngrok.io/admin/user/login/" + rodneCislo + "/" + password)
+    axios.get("https://server.dotaznik.hardart.cz/admin/user/login/" + rodneCislo + "/" + password)
       .then(res => {
         if(res.data === 'errorpassword' || res.data === 'errorlogin'){
           this.setState({

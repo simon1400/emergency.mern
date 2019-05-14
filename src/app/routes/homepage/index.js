@@ -24,7 +24,7 @@ export default class Homepage extends Component {
 
       if (currentUser.typeUser === "pacient") {
         var currentTests = [];
-        axios.get("http://967a6564.ngrok.io/admin/test").then(res => {
+        axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
           currentUser.selectTest.map(selectItem => res.data.map(testItem =>
             selectItem === testItem._id ? currentTests.push(testItem) : false
           ));
@@ -32,12 +32,12 @@ export default class Homepage extends Component {
         });
       }
 
-      axios.get("http://967a6564.ngrok.io/result/").then(res => {
+      axios.get("https://server.dotaznik.hardart.cz/result/").then(res => {
         localStorage.setItem("results", JSON.stringify(res.data.filter(item => item.userId.includes(currentUser._id))))
       });
 
       // beru data z serveru
-      axios.get('http://967a6564.ngrok.io/homepage').then(res => {
+      axios.get('https://server.dotaznik.hardart.cz/homepage').then(res => {
 
         // kontroluju je-li mam vubec data v localStorage nebo jestli
         // je mensi timestamp v local nez na serveru
@@ -59,7 +59,7 @@ export default class Homepage extends Component {
             description: homepage.description,
             dateUpdate: Date.now()
           })
-          axios.post("http://967a6564.ngrok.io/homepage/update/5cd43282836c305a14770983", this.state);
+          axios.post("https://server.dotaznik.hardart.cz/homepage/update/5cd43282836c305a14770983", this.state);
         }
       })
 
@@ -83,7 +83,7 @@ export default class Homepage extends Component {
       dateUpdate: Date.now()
     })
     if(navigator.onLine){
-      await axios.post("http://967a6564.ngrok.io/homepage/update/5cd43282836c305a14770983", this.state)
+      await axios.post("https://server.dotaznik.hardart.cz/homepage/update/5cd43282836c305a14770983", this.state)
         .then(res => {
           window.location.href = "/";
         });
