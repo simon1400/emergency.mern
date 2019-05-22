@@ -255,7 +255,6 @@ export default class TestFull extends Component {
   render() {
     var test = this.state.test;
     var currentAsk = this.state.currentAsk;
-    console.log(test.questions[currentAsk]);
     var answers = this.state.answers;
     return (
       <Page id="homepage">
