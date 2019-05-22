@@ -12,23 +12,32 @@ export default class TestFull extends Component {
 
   componentDidMount() {
     if(this.props.match.params.type){
-      axios
-        .get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
-        .then(res => {
-          this.setState({
-            test: res.data
+      if(navigator.onLine){
+        axios.get("http://localhost:4000/admin/test/" + this.props.match.params.id)
+          .then(res => {
+            this.setState({
+              test: res.data
+            });
           });
+      }else{
+        this.setState({
+          test: JSON.parse(localStorage.getItem("tests")).filter(item => item._id.includes(this.props.match.params.id))
         });
+      }
     }else{
-      axios
-        .get("https://server.dotaznik.hardart.cz/result/" + this.props.match.params.id)
-        .then(res => {
-          this.setState({
-            test: res.data
+      if(navigator.onLine){
+        axios.get("http://localhost:4000/result/" + this.props.match.params.id)
+          .then(res => {
+            this.setState({
+              test: res.data
+            });
           });
+      }else{
+        this.setState({
+          test: JSON.parse(localStorage.getItem("results")).filter(item => item._id.includes(this.props.match.params.id))
         });
+      }
     }
-
   }
 
   render() {
@@ -49,9 +58,9 @@ export default class TestFull extends Component {
                     <h3 className="uk-margin-remove-bottom uk-margin-medium-top">
                       {itemTest.nameQuestion}
                     </h3>
-                    <p className="uk-article-meta uk-margin-remove-top uk-text-lowercase">({itemTest.typeInput})</p>
+                    <p className="uk-article-meta uk-margin-remove-top uk-text-lowercase">({itemTest.typeQuestion})</p>
                   </dt>
-                  {itemTest.typeInput === 'radio' ? itemTest.asks.map((ask, indexAsk) => (
+                  {itemTest.typeQuestion === 'radio' ? itemTest.asks.map((ask, indexAsk) => (
                      <dd key={indexAsk} className="uk-grid-small" uk-grid="">
                       <div className="uk-width-expand" uk-leader="fill: .">
                         {ask.nameAsk}
@@ -74,7 +83,7 @@ export default class TestFull extends Component {
                           {item.checkedValue}
                         </div>
                         <div className="uk-text-primary uk-flex uk-flex-bottom">
-                          {item.checkedBody ? <p>{item.checkedBody} points</p> : 'Text value'}
+                          {item.checkedBody && item.checkedBody !== '0' ? <p>{item.checkedBody} points</p> : 'Text value'}
                         </div>
                       </dd>
                     </dl>

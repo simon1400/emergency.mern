@@ -4,51 +4,51 @@ import axios from "axios";
 
 
 export default class TestFull extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      resultId: "",
-      test: {},
-      currentAsk: 0,
-      answers: [],
-      checkedName: "",
-      checkedBody: "",
-      date: "",
-      done: false,
-      userId: "",
-      prev: false
-    };
-  }
+  state = {
+    resultId: "",
+    test: {},
+    currentAsk: 0,
+    answers: [],
+    checkedName: "",
+    checkedBody: "",
+    date: "",
+    done: false,
+    userId: "",
+    prev: false,
+    dateUpdate: Date.now()
+  };
 
   componentDidMount() {
     let currentUser = JSON.parse(localStorage.getItem("user"));
 
-    axios
-      .get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
-      .then(res => {
-        this.setState({
+    if(navigator.onLine){
+      axios.get("http://localhost:4000/admin/test/" + this.props.match.params.id)
+        .then(res => this.setState({
           test: res.data
-        });
-      });
-
-    axios
-      .get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
-      .then(
-        res =>
-          res.data
-            ? (this.setState({
-                userId: currentUser._id,
-                resultId: "",
-                currentAsk: 0,
-                answers: [],
-                checkedName: "",
-                checkedBody: "",
-                date: "",
-                done: false
-              }),
-              this.getResult(res.data, currentUser))
-            : false
+        })
       );
+
+      axios.get("http://localhost:4000/result/all/" + this.props.match.params.id)
+        .then(res => res.data
+          ? (this.setState({
+              userId: currentUser._id,
+              resultId: "",
+              currentAsk: 0,
+              answers: [],
+              checkedName: "",
+              checkedBody: "",
+              date: "",
+              done: false
+            }),
+            this.getResult(res.data, currentUser))
+          : false
+        );
+    }else if(!navigator.onLine){
+      let test = JSON.parse(localStorage.getItem('tests')).filter(item => item._id.includes(this.props.match.params.id))
+      let results = JSON.parse(localStorage.getItem('results')).filter(item => item.idTest.includes(this.props.match.params.id))
+      this.getResult(results, currentUser)
+      this.setState({ test })
+    }
   }
 
   getResult = (resData, currentUser) => {
@@ -75,34 +75,40 @@ export default class TestFull extends Component {
 
     if (e === "next") {
       this.setState({
-          currentAsk: this.state.currentAsk + 1,
-          answers: answers,
-          date: date
-        });
+        currentAsk: this.state.currentAsk + 1,
+        answers: answers,
+        date: date,
+        dateUpdate: Date.now()
+      });
     } else {
       this.setState({
         answers: answers,
-        date: date
+        date: date,
+        dateUpdate: Date.now()
       });
     }
   };
 
   onPrev = e => {
     this.setState({
-        currentAsk: this.state.currentAsk - 1,
-        prev: true
-      });
+      currentAsk: this.state.currentAsk - 1,
+      prev: true
+    });
   };
 
   onNext = async e => {
     let currentUser = JSON.parse(localStorage.getItem("user"));
 
     if (!this.state.prev && !this.state.resultId) {
-      await axios
-        .get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
-        .then(
-          res => (res.data ? this.getResult(res.data, currentUser) : false)
-        );
+      if(navigator.onLine){
+        await axios.get("http://localhost:4000/result/all/" + this.props.match.params.id)
+          .then(res => (res.data ? this.getResult(res.data, currentUser) : false));
+      }else{
+        var results = JSON.parse(localStorage.getItem('results')).filter(item => item.idTest.includes(this.props.match.params.id));
+        if(results){
+          this.getResult(results, currentUser)
+        }
+      }
     }
 
     await this.updateAnswers("next");
@@ -110,33 +116,47 @@ export default class TestFull extends Component {
     var data = this.sendObjectData(this.state, false);
 
     if (this.state.currentAsk === 1 && !this.state.resultId) {
-      await axios
-        .post("https://server.dotaznik.hardart.cz/result/create/", data)
-        .then(res => console.log("create data next!"));
+      if(navigator.onLine){
+        await axios.post("http://localhost:4000/result/create/", data)
+                  .then(res => console.log("create data next!"));
+      }else{
+        let results = JSON.parse(localStorage.getItem('results'))
+        results.push(data)
+        localStorage.setItem('results', JSON.stringify(results))
+      }
     }
 
     if (this.state.currentAsk && this.state.resultId) {
-      await axios
-        .get("https://server.dotaznik.hardart.cz/result/" + this.state.resultId)
-        .then(res => {
-          var data = res.data[0];
-          if (data && !data.done) {
-            this.setState({
-              resultId: data._id,
-              currentAsk: data.currentAsk,
-              idTest: data.idTest,
-              answers: data.answers
-            });
-          }
-        })
-        .then(() => {
-          axios
-            .post(
-              "https://server.dotaznik.hardart.cz/result/update/" + this.state.resultId,
-              data
-            )
-            .then(console.log("update next"));
-        });
+      if(navigator.onLine){
+        await axios.get("http://localhost:4000/result/" + this.state.resultId)
+                .then(res => {
+                  var data = res.data[0];
+                  if (data && !data.done) {
+                    this.setState({
+                      resultId: data._id,
+                      currentAsk: data.currentAsk,
+                      idTest: data.idTest,
+                      answers: data.answers
+                    });
+                  }
+                }).then(() => axios.post("http://localhost:4000/result/update/" + this.state.resultId, data));
+      }else{
+        let results = JSON.parse(localStorage.getItem('results'))
+        let result = results.filter(item => item._id.includes(this.state.resultId))
+        if (result && !result.done) {
+          this.setState({
+            resultId: result._id,
+            currentAsk: result.currentAsk,
+            idTest: result.idTest,
+            answers: result.answers
+          });
+        }
+        if(results.find(item => item._id === this.state.resultId)){
+          let index = results.findIndex(item => item._id === this.state.resultId);
+          results[index] = data;
+          localStorage.setItem('results', JSON.stringify(results))
+        }
+      }
     }
   };
 
@@ -145,21 +165,38 @@ export default class TestFull extends Component {
 
     var data = this.sendObjectData(this.state, true);
 
-    await axios.get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
-              .then(res => res.data
-                ? res.data.map(item => !item.done && data.userId === item.userId
-                  ? (this.setState({
-                      resultId: item._id,
-                      currentAsk: item.currentAsk,
-                      idTest: item.idTest,
-                      answers: item.answers
-                    }),
-                    axios.post("https://server.dotaznik.hardart.cz/result/update/" + item._id, data)
-                      .then(
-                        () => (window.location.href = "/results/pacient")
-                      )) : false
-                ) : false
-              );
+    if(navigator.onLine){
+      await axios.get("http://localhost:4000/result/all/" + this.props.match.params.id)
+                .then(res => res.data
+                  ? res.data.map(item => !item.done && data.userId === item.userId
+                    ? (this.setState({
+                        resultId: item._id,
+                        currentAsk: item.currentAsk,
+                        idTest: item.idTest,
+                        answers: item.answers
+                      }),
+                      axios.post("http://localhost:4000/result/update/" + item._id, data)
+                        .then(() => window.location.href = "/results/pacient"))
+                    : false
+                  ) : false
+                );
+    }else{
+      let results = JSON.parse(localStorage.getItem('results'))
+      let result = results.filter(item => item._id.includes(this.state.resultId))
+      if (result && !result.done) {
+        this.setState({
+          resultId: result._id,
+          currentAsk: result.currentAsk,
+          idTest: result.idTest,
+          answers: result.answers
+        });
+      }
+      if(results.find(item => item._id === this.state.resultId)){
+        let index = results.findIndex(item => item._id === this.state.resultId);
+        results[index] = data;
+        localStorage.setItem('results', JSON.stringify(results))
+      }
+    }
   };
 
   sendObjectData = (state, done) => {
@@ -170,7 +207,8 @@ export default class TestFull extends Component {
       answers: state.answers,
       date: state.date,
       done: done,
-      userId: state.userId
+      userId: state.userId,
+      dateUpdate: state.dateUpdate
     };
 
     return data;
@@ -205,22 +243,11 @@ export default class TestFull extends Component {
   };
 
   handleText = e => {
-
-    var answers = this.state.answers;
-    var index;
-    var answer = {
-      nameAsk: this.state.test.questions[this.state.currentAsk].nameQuestion,
-      checkedValue: e.target.value
-    };
-    if (answers.find(x => x.nameAsk === this.state.test.questions[this.state.currentAsk].nameQuestion)) {
-      index = answers.findIndex(x => x.nameAsk === this.state.test.questions[this.state.currentAsk].nameQuestion);
-      answers[index] = answer;
-    } else {
-      answers.push(answer);
-    }
+    let answers = this.onCheckedAnswers(e.target.value, '0');
 
     this.setState({
       checkedName: e.target.value,
+      checkedBody: '0',
       answers: answers
     });
   }
@@ -241,7 +268,7 @@ export default class TestFull extends Component {
                 <div className="uk-margin uk-grid-small uk-child-width-1-1 uk-grid">
                   {Object.entries(test).length
                     ? test.questions[currentAsk].asks.map((ask, indexAsk) => (
-                      test.questions[currentAsk].typeInput === 'radio'
+                      test.questions[currentAsk].typeQuestion === 'radio'
                         ? <label key={indexAsk}>
                             {answers.length >= 1 && currentAsk < answers.length
                               ? <input className="uk-radio" onChange={this.onHandleCheckbox} type="radio" value={ask.nameAsk} data-body={ask.valueAsk} checked={answers[currentAsk].checkedValue === ask.nameAsk} />

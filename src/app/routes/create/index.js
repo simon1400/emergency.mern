@@ -3,34 +3,34 @@ import Page from "../../components/page";
 import axios from "axios";
 
 export default class Create extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      validQuestName: false,
-      validAskName: false,
-      nameTest: "",
-      currentQuestion: 0,
-      questions: [
-        {
-          nameQuestion: "",
-          descriptionQuestion: "",
-          descriptionShow: false,
-          typeInput: 'radio',
-          countAsk: 1,
-          asks: [
-            {
-              nameAsk: "",
-              valueAsk: 0
-            }
-          ]
-        }
-      ]
-    };
-  }
+
+  state = {
+    validQuestName: false,
+    validAskName: false,
+    dateUpdate: Date.now(),
+    nameTest: "",
+    currentQuestion: 0,
+    questions: [
+      {
+        nameQuestion: "",
+        descriptionQuestion: "",
+        descriptionShow: false,
+        typeQuestion: 'radio',
+        countAsk: 1,
+        asks: [
+          {
+            nameAsk: "",
+            valueAsk: 0
+          }
+        ]
+      }
+    ]
+  };
 
   componentDidMount() {
+    console.log(this.state);
     if (this.props.match.params.id) {
-      axios.get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
+      axios.get("http://localhost:4000/admin/test/" + this.props.match.params.id)
         .then(res => {
           this.setState({
             ...res.data
@@ -47,7 +47,7 @@ export default class Create extends Component {
         validAskName: false,
         questions
       });
-    } else if (["nameQuestion", "descriptionQuestion", "typeInput"].includes(e.target.name)) {
+    } else if (["nameQuestion", "descriptionQuestion", "typeQuestion"].includes(e.target.name)) {
       questions[e.target.dataset.countquestion][e.target.name] = e.target.value;
       this.setState({
         validQuestName: false,
@@ -80,7 +80,7 @@ export default class Create extends Component {
             nameQuestion: "",
             descriptionQuestion: "",
             descriptionShow: false,
-            typeInput: 'radio',
+            typeQuestion: 'radio',
             countAsk: 1,
             asks: [
               {
@@ -102,10 +102,10 @@ export default class Create extends Component {
     var currentQuestion = this.state.currentQuestion
     var lastAsk = questions[currentQuestion].asks.length - 1;
 
-    // questions[currentQuestion].typeInput === 'radio'
+    // questions[currentQuestion].typeQuestion === 'radio'
 
     if(Boolean(questions[currentQuestion].nameQuestion)){
-      if(questions[currentQuestion].typeInput === 'radio'){
+      if(questions[currentQuestion].typeQuestion === 'radio'){
         if(Boolean(questions[currentQuestion].asks[lastAsk].nameAsk)) {
           this.validationControl();
         }else{
@@ -113,7 +113,7 @@ export default class Create extends Component {
             validAskName: true
           })
         }
-      }else if(questions[currentQuestion].typeInput === 'text'){
+      }else if(questions[currentQuestion].typeQuestion === 'text'){
         this.validationControl();
       }
     }else if(Boolean(questions[currentQuestion].nameQuestion)){
@@ -142,7 +142,7 @@ export default class Create extends Component {
 
     if(Boolean(questions[currentQuestion].nameQuestion)){
 
-      if(questions[currentQuestion].typeInput === 'radio'){
+      if(questions[currentQuestion].typeQuestion === 'radio'){
         if(Boolean(questions[currentQuestion].asks[lastAsk].nameAsk)) {
           this.setState({
             currentQuestion: this.state.currentQuestion - 1,
@@ -154,7 +154,7 @@ export default class Create extends Component {
             validAskName: true
           })
         }
-      }else if(questions[currentQuestion].typeInput === 'text'){
+      }else if(questions[currentQuestion].typeQuestion === 'text'){
         this.setState({
           currentQuestion: this.state.currentQuestion - 1,
           validQuestName: false,
@@ -217,11 +217,15 @@ export default class Create extends Component {
   submitForm = e => {
     e.preventDefault();
 
+    this.setState({
+      dateUpdate: Date.now()
+    })
+
     if (this.props.match.params.id) {
-      axios.post("https://server.dotaznik.hardart.cz/admin/test/update/" + this.props.match.params.id, this.state)
+      axios.post("http://localhost:4000/admin/test/update/" + this.props.match.params.id, this.state)
         .then(res => window.location.href = "/tests/admin");
     } else {
-      axios.post("https://server.dotaznik.hardart.cz/admin/test/create", this.state)
+      axios.post("http://localhost:4000/admin/test/create", this.state)
         .then(res => {
           window.location.href = "/tests/admin"
         });
@@ -257,7 +261,7 @@ export default class Create extends Component {
                   </div>
 
                   <div className="uk-margin">
-                    <select className="uk-select" value={this.state.questions[this.state.currentQuestion].typeInput} name="typeInput" data-countquestion={this.state.currentQuestion} onChange={this.handleChange}>
+                    <select className="uk-select" value={this.state.questions[this.state.currentQuestion].typeQuestion} name="typeQuestion" data-countquestion={this.state.currentQuestion} onChange={this.handleChange}>
                       <option value="radio">Radio</option>
                       <option value="text">Text</option>
                     </select>
@@ -273,7 +277,7 @@ export default class Create extends Component {
 
                   <hr />
 
-                  {this.state.questions[this.state.currentQuestion].typeInput === 'radio'
+                  {this.state.questions[this.state.currentQuestion].typeQuestion === 'radio'
                     ? <div>
                         <h3 className="uk-legend">Answers:</h3>
                         {this.state.questions[this.state.currentQuestion].asks.map((ask, index) => (
@@ -301,11 +305,11 @@ export default class Create extends Component {
                     </div>
                     <div>
                       <div className="uk-grid uk-grid-collapse@s" uk-grid="">
-                      {this.state.currentQuestion ?
-                        <div className="uk-width-2-3@s uk-width-1-2">
-                          <button className="uk-button uk-button-primary uk-width-1-1 uk-width-auto@s uk-align-right@s" onClick={this.prevQuestion}>Prev</button>
-                        </div>
-                       : ""}
+                      {this.state.currentQuestion
+                        ? <div className="uk-width-2-3@s uk-width-1-2">
+                            <button className="uk-button uk-button-primary uk-width-1-1 uk-width-auto@s uk-align-right@s" onClick={this.prevQuestion}>Prev</button>
+                          </div>
+                        : ""}
 
                         <div className={this.state.currentQuestion ? 'uk-width-1-3@s uk-width-1-2' : 'uk-width-1-1'}>
                           <button className="uk-button uk-button-primary uk-width-1-1 uk-align-right@s" onClick={this.addQuestion}>Next</button>

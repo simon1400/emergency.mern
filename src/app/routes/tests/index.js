@@ -13,7 +13,7 @@ export default class Create extends Component {
 
   componentDidMount() {
     if (this.props.match.params.user === "admin" || this.props.match.params.user === "doctor") {
-      axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
+      axios.get("http://localhost:4000/admin/test").then(res => {
         this.setState({
           tests: res.data
         });
@@ -22,7 +22,7 @@ export default class Create extends Component {
       if(navigator.onLine){
         let currentUser = JSON.parse(localStorage.getItem("user"));
         var currentTests = [];
-        axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
+        axios.get("http://localhost:4000/admin/test").then(res => {
           currentUser.selectTest.map(selectItem =>
             res.data.map(
               testItem =>
@@ -52,7 +52,7 @@ export default class Create extends Component {
         if (tests[i]._id === saveTarget.dataset.name) tests.splice(i, 1);
       }
 
-      axios.delete("https://server.dotaznik.hardart.cz/admin/test/delete/" + saveTarget.dataset.name);
+      axios.delete("http://localhost:4000/admin/test/delete/" + saveTarget.dataset.name);
     }, function () {
         console.log('Rejected.')
     }).then(() => {
@@ -62,43 +62,32 @@ export default class Create extends Component {
     })
   };
 
-  onEdit = (e) => {
+  onEdit = e => {
     window.location.href = e.currentTarget.dataset.href
   }
 
   render() {
     var tests = this.state.tests;
     var typeUser = this.props.match.params.user;
-    console.log(typeUser);
     return (
       <Page id="homepage">
         <div className="uk-container">
-          <div
-            className="uk-grid uk-child-width-1-1 uk-child-width-1-3@s "
-            uk-grid=""
-          >
+          <div className="uk-grid uk-child-width-1-1 uk-child-width-1-3@s " uk-grid="">
             {tests
               ? tests.map((item, index) => (
                   <div key={index} className="uk-margin-bottom">
-                    <Link
-                      to={typeUser === "pacient" ? `/tests/pacient/${item._id}` : `/view/results/${item._id}/${typeUser}`}
-                      className="uk-card uk-card-default uk-card-hover uk-card-body uk-display-block uk-link-reset"
-                    >
-                      <h3 className="uk-card-title uk-text-center uk-margin-remove-bottom">
-                        {item.nameTest}
-                      </h3>
-                      {typeUser !== "pacient" && typeUser !== "doctor" ? (
-                        <ul className="uk-iconnav uk-modal-close-default">
-                          <li><span onClick={this.onEdit} data-href={`/create/${item._id}`} uk-icon="icon: file-edit"></span></li>
-                          <li><span onClick={this.onDelete} data-name={item._id} uk-icon="icon: trash"></span></li>
-                        </ul>
-                      ) : (
-                        false
-                      )}
+                    <Link to={typeUser === "pacient" ? `/tests/pacient/${item._id}` : `/view/results/${item._id}/${typeUser}`} className="uk-card uk-card-default uk-card-hover uk-card-body uk-display-block uk-link-reset">
+                      <h3 className="uk-card-title uk-text-center uk-margin-remove-bottom">{item.nameTest}</h3>
+                      {typeUser !== "pacient" && typeUser !== "doctor"
+                        ? (<ul className="uk-iconnav uk-modal-close-default">
+                            <li><span onClick={this.onEdit} data-href={`/create/${item._id}`} uk-icon="icon: file-edit"></span></li>
+                            <li><span onClick={this.onDelete} data-name={item._id} uk-icon="icon: trash"></span></li>
+                          </ul>)
+                        : ''}
                     </Link>
                   </div>
                 ))
-              : false}
+              : ''}
           </div>
         </div>
       </Page>

@@ -30,22 +30,16 @@ export default class Create extends Component {
 
     if (this.props.match.params.typeUser === "pacient") {
       let currentUser = JSON.parse(localStorage.getItem("user"));
-      this.setState(
-        {
-          parrentDoctor: currentUser._id
-        },
-        () => console.log(this.state)
-      );
+      this.setState({ parrentDoctor: currentUser._id });
     }
   }
 
   loadData = id => {
-    axios.get("https://server.dotaznik.hardart.cz/admin/user/" + id).then(res =>
+    axios.get("http://localhost:4000/admin/user/" + id).then(res =>
       this.setState({
         name: res.data.name,
         surname: res.data.surname,
         rodneCislo: res.data.rodneCislo,
-        password: res.data.password,
         typeUser: res.data.typeUser,
         selectTest: res.data.selectTest
       })
@@ -73,7 +67,7 @@ export default class Create extends Component {
     if (this.props.match.params.id) {
       axios
         .post(
-          "https://server.dotaznik.hardart.cz/admin/user/update/" +
+          "http://localhost:4000/admin/user/update/" +
             this.props.match.params.id,
           this.state
         )
@@ -82,7 +76,7 @@ export default class Create extends Component {
         });
     } else {
       axios
-        .post("https://server.dotaznik.hardart.cz/admin/user/create", this.state)
+        .post("http://localhost:4000/admin/user/create", this.state)
         .then(res => {
           window.location.href = "/list/all/" + this.state.typeUser;
         });

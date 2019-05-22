@@ -4,7 +4,6 @@ import { bindActionCreators } from "redux";
 import Page from "../../components/page";
 import axios from "axios";
 
-
 import { setCurrentUser } from "../../../modules/auth";
 
 class Login extends Component {
@@ -20,7 +19,7 @@ class Login extends Component {
 
   login = (e, rodneCislo, password) => {
     e.preventDefault()
-    axios.get("https://server.dotaznik.hardart.cz/admin/user/login/" + rodneCislo + "/" + password)
+    axios.get("http://localhost:4000/admin/user/login/" + rodneCislo + "/" + password)
       .then(res => {
         if(res.data === 'errorpassword' || res.data === 'errorlogin'){
           this.setState({
@@ -49,49 +48,26 @@ class Login extends Component {
             <hr />
 
             <form className="uk-form-stacked">
-              {this.state.error ? <div className="uk-alert-danger" uk-alert="">
-                  <p>Error login or password</p>
-                </div>
-              : ''}
+              {this.state.error
+                ? <div className="uk-alert-danger" uk-alert="">
+                    <p>Error login or password</p>
+                  </div>
+                : ''}
 
               <div className="uk-margin">
                 <div className="uk-form-controls">
-                  <input
-                    className="uk-input uk-form-width-large"
-                    onChange={this.handleChange}
-                    name="rodneCislo"
-                    type="text"
-                    placeholder="ID Number"
-                  />
+                  <input className="uk-input uk-form-width-large" onChange={this.handleChange} name="rodneCislo" type="text" placeholder="ID Number" />
                 </div>
               </div>
 
               <div className="uk-margin">
                 <div className="uk-form-controls">
-                  <input
-                    className="uk-input uk-form-width-large"
-                    onChange={this.handleChange}
-                    name="password"
-                    readOnly={this.state.readPassword}
-                    onFocus={(e) => this.setState({readPassword: false})}
-                    type="password"
-                    placeholder="Password"
-                  />
+                  <input className="uk-input uk-form-width-large" onChange={this.handleChange} name="password" readOnly={this.state.readPassword} onFocus={(e) => this.setState({readPassword: false})} type="password" placeholder="Password"/>
                 </div>
               </div>
+
               <hr />
-              <button
-                className="uk-button uk-button-primary"
-                onClick={(e) =>
-                  this.login(
-                    e,
-                    this.state.rodneCislo,
-                    this.state.password
-                  )
-                }
-              >
-                Prihlasit se
-              </button>
+              <button className="uk-button uk-button-primary" onClick={(e) => this.login(e, this.state.rodneCislo, this.state.password)}>Login</button>
             </form>
           </div>
         </div>
