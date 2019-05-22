@@ -11,6 +11,7 @@ export default class TestFull extends Component {
   }
 
   componentDidMount() {
+    console.log(navigator.onLine);
     if(this.props.match.params.type){
       if(navigator.onLine){
         axios.get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
@@ -42,7 +43,6 @@ export default class TestFull extends Component {
 
   render() {
     var test = this.state.test;
-    console.log(test);
     var typeuser = this.props.match.params.type
     return (
       <Page id="homepage">
