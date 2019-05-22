@@ -13,7 +13,7 @@ export default class TestFull extends Component {
   componentDidMount() {
     if(this.props.match.params.type){
       if(navigator.onLine){
-        axios.get("http://localhost:4000/admin/test/" + this.props.match.params.id)
+        axios.get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
           .then(res => {
             this.setState({
               test: res.data
@@ -26,7 +26,7 @@ export default class TestFull extends Component {
       }
     }else{
       if(navigator.onLine){
-        axios.get("http://localhost:4000/result/" + this.props.match.params.id)
+        axios.get("https://server.dotaznik.hardart.cz/result/" + this.props.match.params.id)
           .then(res => {
             this.setState({
               test: res.data

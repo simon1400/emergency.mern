@@ -11,7 +11,7 @@ export default class Create extends Component {
   }
 
   componentDidMount() {
-    axios.get("http://localhost:4000/admin/test").then(res => {
+    axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
       let tests = [];
       res.data.map(item => tests.push({ name: item.nameTest, _id: item._id }));
       this.setState({
