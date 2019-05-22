@@ -6,7 +6,7 @@ import Page from '../../components/page';
 export default class Homepage extends Component {
 
   // componentDidMount() {
-  //   axios.get("http://localhost:4000/admin/test").then(res => {
+  //   axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
   //     window.localStorage
   //   });
   // }
