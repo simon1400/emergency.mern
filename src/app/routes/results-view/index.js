@@ -42,6 +42,7 @@ export default class TestFull extends Component {
 
   render() {
     var test = this.state.test;
+    console.log(test);
     var typeuser = this.props.match.params.type
     return (
       <Page id="homepage">

@@ -6,13 +6,11 @@ import XlsExport from 'xlsexport'
 
 
 export default class Results extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tests: [],
-      typeUser: ''
-    };
-  }
+
+  state = {
+    tests: [],
+    typeUser: ''
+  };
 
   componentDidMount() {
     if(this.props.match.params.id){
@@ -121,7 +119,7 @@ export default class Results extends Component {
               {tests.length
                 ? tests.map((item, index) => (
                     <div key={index} className="uk-margin-small-bottom">
-                      <Link to={item.done ? `/view/results/${item._id}` : `/tests/pacient/${item.idTest}`} className="uk-card uk-card-default uk-card-hover uk-card-body uk-padding-small uk-display-block uk-link-reset">
+                      <Link to={item.done ? `/view/results/${item._id}` : `/tests/pacient/edit/${item.idTest}`} className="uk-card uk-card-default uk-card-hover uk-card-body uk-padding-small uk-display-block uk-link-reset">
                         <h3 className="uk-card-title">{item.nameTest}</h3>
                         <div className="uk-child-width-1-2 uk-grid" uk-grid="">
                           <div>
@@ -138,18 +136,20 @@ export default class Results extends Component {
                                   </span>
                                 </p>
                               : <div className="uk-text-right">
-                                  <p className="uk-article-meta uk-text-warning uk-margin-remove-bottom">
-                                    Pokracovat
-                                  </p>
+                                  <p className="uk-article-meta uk-text-warning uk-margin-remove-bottom">Pokracovat</p>
                                 </div>}
                           </div>
                         </div>
+
                         {this.props.match.params.id
                           ? <ul className="uk-iconnav uk-modal-close-default">
                               <li><span onClick={this.onExport} id={item._id} uk-icon="icon: cloud-download"></span></li>
                               <li><span onClick={this.onDelete} data-name={item._id} uk-icon="icon: trash"></span></li>
+                              <li><Link to={`/tests/pacient/edit/${item.idTest}`} uk-icon="icon: file-edit"></Link></li>
                             </ul>
-                          : ''}
+                          : <ul className="uk-iconnav uk-modal-close-default">
+                            <li><Link to={`/tests/pacient/edit/${item.idTest}`} uk-icon="icon: file-edit"></Link></li>
+                          </ul>}
                       </Link>
                     </div>
                   ))

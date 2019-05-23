@@ -16,12 +16,13 @@ export default class TestFull extends Component {
     userId: "",
     prev: false,
     dateUpdate: Date.now(),
-    showDescr: false
+    showDescr: false,
+    changeInput: false
   };
 
   componentDidMount() {
     let currentUser = JSON.parse(localStorage.getItem("user"));
-
+    console.log('update');
     if(navigator.onLine){
       axios.get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
         .then(res => this.setState({
@@ -53,23 +54,59 @@ export default class TestFull extends Component {
   }
 
   getResult = (resData, currentUser) => {
-    resData.map(
-      data => !data.done && data.userId === currentUser._id
-        ? this.setState({
-            resultId: data._id,
-            currentAsk: data.currentAsk,
-            idTest: data.idTest,
-            answers: data.answers
-          })
-        : false
-    );
+    let url = this.props.match.url.split('/')
+    url.shift()
+    if(url[2] !== 'edit'){
+      resData.map(
+        data => !data.done && data.userId === currentUser._id
+          ? this.setState({
+              resultId: data._id,
+              currentAsk: data.currentAsk,
+              idTest: data.idTest,
+              answers: data.answers
+            })
+          : false
+      );
+    }else if(url[2] === 'edit'){
+      resData.map(
+        data => data.userId === currentUser._id
+          ? this.setState({
+              resultId: data._id,
+              currentAsk: 0,
+              idTest: data.idTest,
+              answers: data.answers,
+              done: false
+            }, async () => {
+              var dataSend = this.sendObjectData(this.state, false)
+              await axios.post("https://server.dotaznik.hardart.cz/result/update/" + this.state.resultId, dataSend)
+            })
+          : false
+      );
+    }
+
   };
 
   updateAnswers = e => {
-    let answers = this.onCheckedAnswers(
-      this.state.checkedName,
-      this.state.checkedBody
-    );
+    if(e === 'finishEmpty'){
+      var answers = this.onCheckedAnswers(
+        this.state.answers[this.state.currentAsk].checkedValue,
+        this.state.answers[this.state.currentAsk].checkedBody,
+      );
+    }else{
+      var answers = this.onCheckedAnswers(
+        this.state.checkedName,
+        this.state.checkedBody
+      );
+    }
+
+    var url = this.props.match.url.split('/')
+    url.shift()
+
+    if(url[2] === 'edit'){
+      this.setState({
+        changeInput: false
+      })
+    }
 
     var now = new Date();
     var date = now.getDate() + "." + now.getMonth() + "." + now.getFullYear() + " " + now.getHours() + ":" + now.getMinutes();
@@ -100,6 +137,8 @@ export default class TestFull extends Component {
   onNext = async e => {
     let currentUser = JSON.parse(localStorage.getItem("user"));
 
+    console.log('next');
+
     if (!this.state.prev && !this.state.resultId) {
       if(navigator.onLine){
         await axios.get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
@@ -113,6 +152,7 @@ export default class TestFull extends Component {
     }
 
     await this.updateAnswers("next");
+
 
     var data = this.sendObjectData(this.state, false);
 
@@ -161,8 +201,29 @@ export default class TestFull extends Component {
     }
   };
 
+  onNextEmpty = e => {
+
+    // console.log(this.state.currentAsk);
+    // console.log(this.state.answers[this.state.currentAsk].checkedValue);
+    // console.log(this.state.answers[this.state.currentAsk].checkedBody);
+
+    let answers = this.onCheckedAnswers(this.state.answers[this.state.currentAsk].checkedValue, this.state.answers[this.state.currentAsk].checkedBody);
+
+    this.setState({
+      checkedName: this.state.answers[this.state.currentAsk].checkedValue,
+      checkedBody: this.state.answers[this.state.currentAsk].checkedBody,
+      answers: answers,
+      changeInput: false
+    }, () => this.onNext());
+  }
+
   onFinish = async () => {
-    await this.updateAnswers("finish");
+    if(this.state.changeInput){
+      await this.updateAnswers("finish");
+    }else{
+      await this.updateAnswers("finishEmpty");
+    }
+
 
     var data = this.sendObjectData(this.state, true);
 
@@ -221,7 +282,8 @@ export default class TestFull extends Component {
     this.setState({
       checkedName: e.target.value,
       checkedBody: e.target.dataset.body,
-      answers: answers
+      answers: answers,
+      changeInput: true
     });
   };
 
@@ -249,7 +311,8 @@ export default class TestFull extends Component {
     this.setState({
       checkedName: e.target.value,
       checkedBody: '0',
-      answers: answers
+      answers: answers,
+      changeInput: true
     });
   }
 
@@ -263,6 +326,8 @@ export default class TestFull extends Component {
     var test = this.state.test;
     var currentAsk = this.state.currentAsk;
     var answers = this.state.answers;
+    var url = this.props.match.url.split('/')
+    url.shift()
     return (
       <Page id="homepage">
         <div className="uk-container">
@@ -293,7 +358,7 @@ export default class TestFull extends Component {
                           </label>
                         : <div key={indexAsk} className="uk-margin">
                             <div className="uk-form-controls">
-                              <textarea className="uk-textarea" onChange={this.handleText} value={ask.checkedValue} rows="3" placeholder={test.questions[currentAsk].nameQuestion} />
+                              <textarea className="uk-textarea" onChange={this.handleText} value={url[2] === 'edit' || answers[currentAsk] ? answers[currentAsk].checkedValue : ask.checkedValue} rows="3" placeholder={test.questions[currentAsk].nameQuestion} />
                             </div>
                           </div>)
                       ) : ''}
@@ -306,7 +371,7 @@ export default class TestFull extends Component {
               {test.questions
                 ? (currentAsk === test.questions.length - 1
                   ? <button className="uk-button uk-button-primary uk-align-right" onClick={this.onFinish}>Finish</button>
-                  : <button className="uk-button uk-button-primary uk-align-right" onClick={this.onNext}>Next</button>
+                  : <button className="uk-button uk-button-primary uk-align-right" onClick={url[2] === 'edit' && !this.state.changeInput ? this.onNextEmpty : this.onNext}>Next</button>
                 ) : ""}
               {currentAsk >= 1 ? <button className="uk-button uk-button-primary uk-align-right" onClick={this.onPrev}>Prev</button> : ""}
             </div>
