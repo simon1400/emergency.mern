@@ -15,7 +15,8 @@ export default class TestFull extends Component {
     done: false,
     userId: "",
     prev: false,
-    dateUpdate: Date.now()
+    dateUpdate: Date.now(),
+    showDescr: false
   };
 
   componentDidMount() {
@@ -252,6 +253,12 @@ export default class TestFull extends Component {
     });
   }
 
+  handleDescr = () => {
+    this.setState({
+      showDescr: !this.state.showDescr
+    })
+  }
+
   render() {
     var test = this.state.test;
     var currentAsk = this.state.currentAsk;
@@ -262,7 +269,16 @@ export default class TestFull extends Component {
           <div className="uk-grid uk-child-width-1-1" uk-grid="">
             <div>
               <h1 className="uk-heading-divider uk-text-center uk-margin-remove-bottom">{test.nameTest}</h1>
-              <h3 className="uk-heading-divider uk-margin-small-top">{test.questions ? test.questions[currentAsk].nameQuestion : ''}</h3>
+              <h3 className="uk-heading-divider uk-margin-small-top">
+                {test.questions ? test.questions[currentAsk].nameQuestion : ''}
+                {test.questions ? test.questions[currentAsk].descriptionQuestion ? <button className="uk-button uk-button-link uk-text-capitalize uk-margin-left" onClick={this.handleDescr}>Description</button> : '' : ''}
+              </h3>
+
+              {test.questions ? test.questions[currentAsk].descriptionQuestion
+                ? <div className={!this.state.showDescr ? 'uk-hidden' : ''}>
+                  {test.questions[currentAsk].descriptionQuestion}
+                  <hr className="uk-margin-small-top" />
+                </div> : '' : ''}
 
               <form>
                 <div className="uk-margin uk-grid-small uk-child-width-1-1 uk-grid">

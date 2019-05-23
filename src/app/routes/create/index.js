@@ -28,7 +28,6 @@ export default class Create extends Component {
   };
 
   componentDidMount() {
-    console.log(this.state);
     if (this.props.match.params.id) {
       axios.get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
         .then(res => {
@@ -221,13 +220,15 @@ export default class Create extends Component {
       dateUpdate: Date.now()
     })
 
+    console.log(this.state);
+
     if (this.props.match.params.id) {
       axios.post("https://server.dotaznik.hardart.cz/admin/test/update/" + this.props.match.params.id, this.state)
-        .then(res => window.location.href = "/tests/admin");
+        // .then(res => window.location.href = "/tests/admin");
     } else {
       axios.post("https://server.dotaznik.hardart.cz/admin/test/create", this.state)
         .then(res => {
-          window.location.href = "/tests/admin"
+          // window.location.href = "/tests/admin"
         });
     }
   };

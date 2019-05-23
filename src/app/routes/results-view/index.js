@@ -11,7 +11,6 @@ export default class TestFull extends Component {
   }
 
   componentDidMount() {
-    console.log(navigator.onLine);
     if(this.props.match.params.type){
       if(navigator.onLine){
         axios.get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
@@ -49,45 +48,40 @@ export default class TestFull extends Component {
         <div className="uk-container">
           <div className="uk-grid uk-child-width-1-1" uk-grid="">
             <div>
-              <h1 className="uk-heading-divider uk-text-center">
-                {test.nameTest}
-              </h1>
-              {typeuser ? (test.questions ? test.questions.map((itemTest, index) => (
-                <dl key={index} className="uk-description-list uk-description-list-divider">
-                  <dt>
-                    <h3 className="uk-margin-remove-bottom uk-margin-medium-top">
-                      {itemTest.nameQuestion}
-                    </h3>
-                    <p className="uk-article-meta uk-margin-remove-top uk-text-lowercase">({itemTest.typeQuestion})</p>
-                  </dt>
-                  {itemTest.typeQuestion === 'radio' ? itemTest.asks.map((ask, indexAsk) => (
-                     <dd key={indexAsk} className="uk-grid-small" uk-grid="">
-                      <div className="uk-width-expand" uk-leader="fill: .">
-                        {ask.nameAsk}
-                      </div>
-                      <div className="uk-text-primary uk-flex uk-flex-bottom">
-                        <p>{ask.valueAsk} points</p>
-                      </div>
-                    </dd>
-                  )) : ''}
-                </dl>))
-                : '') : (test.answers ? test.answers.map((item, index) => (
-                    <dl key={index} className="uk-description-list uk-description-list-divider">
-                      <dt>
-                        <h3 className="uk-margin-remove-bottom">
-                          {item.nameAsk}
-                        </h3>
-                      </dt>
-                       <dd className="uk-grid-small" uk-grid="">
-                        <div className="uk-width-expand" uk-leader="fill: .">
-                          {item.checkedValue}
-                        </div>
-                        <div className="uk-text-primary uk-flex uk-flex-bottom">
-                          {item.checkedBody && item.checkedBody !== '0' ? <p>{item.checkedBody} points</p> : 'Text value'}
-                        </div>
-                      </dd>
-                    </dl>
-                  )) : '')}
+              <h1 className="uk-heading-divider uk-text-center">{test.nameTest}</h1>
+              {typeuser
+                ? (test.questions
+                  ? test.questions.map((itemTest, index) =>
+                      <dl key={index} className="uk-description-list uk-description-list-divider">
+                        <dt>
+                          <h3 className="uk-margin-remove-bottom uk-margin-medium-top">
+                            {itemTest.nameQuestion}
+                          </h3>
+                          <p className="uk-article-meta uk-margin-remove-top uk-text-lowercase">({itemTest.typeQuestion})</p>
+                        </dt>
+                        {itemTest.typeQuestion === 'radio' ? itemTest.asks.map((ask, indexAsk) =>
+                          <dd key={indexAsk} className="uk-grid-small" uk-grid="">
+                            <div className="uk-width-expand" uk-leader="fill: .">{ask.nameAsk}</div>
+                            <div className="uk-text-primary uk-flex uk-flex-bottom">
+                              <p>{ask.valueAsk} points</p>
+                            </div>
+                          </dd>) : ''}
+                      </dl>)
+                  : '')
+                : (test.answers
+                  ? test.answers.map((item, index) =>
+                        <dl key={index} className="uk-description-list uk-description-list-divider">
+                          <dt>
+                            <h3 className="uk-margin-remove-bottom">{item.nameAsk}</h3>
+                          </dt>
+                           <dd className="uk-grid-small" uk-grid="">
+                            <div className="uk-width-expand" uk-leader="fill: .">{item.checkedValue}</div>
+                            <div className="uk-text-primary uk-flex uk-flex-bottom">
+                              {item.checkedBody && item.checkedBody !== '0' ? <p>{item.checkedBody} points</p> : 'Text value'}
+                            </div>
+                          </dd>
+                        </dl>)
+                  : '')}
               <hr />
             </div>
           </div>
