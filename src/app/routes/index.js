@@ -72,7 +72,7 @@ export default class Routes extends Component {
         <AuthentticatedRoute exact path="/" component={Homepage} />
         <AuthentticatedRoute exact path="/tests/:user" component={Tests} />
         <AuthentticatedRoute exact path="/tests/pacient/:id" component={Test} />
-        <AuthentticatedRoute exact path="/tests/pacient/edit/:id" component={Test} />
+        <AuthentticatedRoute exact path="/tests/pacient/edit/:id/:resultId" component={Test} />
         <AuthentticatedRoute exact path="/results/pacient" component={Results} />
         <AuthentticatedRoute exact path="/doctor/results/:id" component={Results} />
         <AuthentticatedRoute exact path="/view/results/:id" component={ResultsView} />

@@ -119,7 +119,7 @@ export default class Results extends Component {
               {tests.length
                 ? tests.map((item, index) => (
                     <div key={index} className="uk-margin-small-bottom">
-                      <Link to={item.done ? `/view/results/${item._id}` : `/tests/pacient/edit/${item.idTest}`} className="uk-card uk-card-default uk-card-hover uk-card-body uk-padding-small uk-display-block uk-link-reset">
+                      <Link to={item.done ? `/view/results/${item._id}` : `/tests/pacient/${item.idTest}`} className="uk-card uk-card-default uk-card-hover uk-card-body uk-padding-small uk-display-block uk-link-reset">
                         <h3 className="uk-card-title">{item.nameTest}</h3>
                         <div className="uk-child-width-1-2 uk-grid" uk-grid="">
                           <div>
@@ -148,8 +148,8 @@ export default class Results extends Component {
                               <li><Link to={`/tests/pacient/edit/${item.idTest}`} uk-icon="icon: file-edit"></Link></li>
                             </ul>
                           : <ul className="uk-iconnav uk-modal-close-default">
-                            <li><Link to={`/tests/pacient/edit/${item.idTest}`} uk-icon="icon: file-edit"></Link></li>
-                          </ul>}
+                              <li><Link to={`/tests/pacient/edit/${item.idTest}/${item._id}`} uk-icon="icon: file-edit"></Link></li>
+                            </ul>}
                       </Link>
                     </div>
                   ))

@@ -69,16 +69,13 @@ export default class TestFull extends Component {
       );
     }else if(url[2] === 'edit'){
       resData.map(
-        data => data.userId === currentUser._id
+        data => data.userId === currentUser._id && this.props.match.params.resultId === data._id
           ? this.setState({
               resultId: data._id,
               currentAsk: 0,
               idTest: data.idTest,
               answers: data.answers,
               done: false
-            }, async () => {
-              var dataSend = this.sendObjectData(this.state, false)
-              await axios.post("https://server.dotaznik.hardart.cz/result/update/" + this.state.resultId, dataSend)
             })
           : false
       );
@@ -123,8 +120,10 @@ export default class TestFull extends Component {
         answers: answers,
         date: date,
         dateUpdate: Date.now()
-      });
+      }, () => console.log(this.state));
     }
+
+
   };
 
   onPrev = e => {
@@ -153,10 +152,12 @@ export default class TestFull extends Component {
 
     await this.updateAnswers("next");
 
-
     var data = this.sendObjectData(this.state, false);
 
-    if (this.state.currentAsk === 1 && !this.state.resultId) {
+    var url = this.props.match.url.split('/')
+    url.shift()
+
+    if (this.state.currentAsk === 1 && !this.state.resultId && url[2] !== 'edit') {
       if(navigator.onLine){
         await axios.post("https://server.dotaznik.hardart.cz/result/create/", data)
                   .then(res => console.log("create data next!"));
@@ -203,9 +204,10 @@ export default class TestFull extends Component {
 
   onNextEmpty = e => {
 
-    // console.log(this.state.currentAsk);
-    // console.log(this.state.answers[this.state.currentAsk].checkedValue);
-    // console.log(this.state.answers[this.state.currentAsk].checkedBody);
+
+    console.log(this.state.currentAsk);
+    console.log(this.state.answers[this.state.currentAsk].checkedValue);
+    console.log(this.state.answers[this.state.currentAsk].checkedBody);
 
     let answers = this.onCheckedAnswers(this.state.answers[this.state.currentAsk].checkedValue, this.state.answers[this.state.currentAsk].checkedBody);
 
@@ -223,7 +225,6 @@ export default class TestFull extends Component {
     }else{
       await this.updateAnswers("finishEmpty");
     }
-
 
     var data = this.sendObjectData(this.state, true);
 
@@ -290,11 +291,13 @@ export default class TestFull extends Component {
   onCheckedAnswers = (value, body) => {
     var answers = this.state.answers;
     var index;
+
     var answer = {
       nameAsk: this.state.test.questions[this.state.currentAsk].nameQuestion,
       checkedValue: value,
       checkedBody: body
     };
+
     if (answers.find(x => x.nameAsk === this.state.test.questions[this.state.currentAsk].nameQuestion)) {
       index = answers.findIndex(x => x.nameAsk === this.state.test.questions[this.state.currentAsk].nameQuestion);
       answers[index] = answer;
