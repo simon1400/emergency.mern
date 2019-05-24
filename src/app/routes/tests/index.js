@@ -16,15 +16,31 @@ export default class Create extends Component {
         tests: JSON.parse(localStorage.getItem("tests"))
       });
     } else if (this.props.match.params.user === "pacient") {
-      var testsNew = []
-      currentUser.selectTest.map(testId => {
-        testsNew.push(JSON.parse(localStorage.getItem("tests")).filter(item => item._id.includes(testId)))
-      })
-      var tests= []
-      testsNew.map(item => (
-        tests.push(item[0])
-      ))
-      this.setState({ tests });
+      if(navigator.onLine){
+        let currentUser = JSON.parse(localStorage.getItem("user"));
+        var currentTests = [];
+        axios.get("http://localhost:4000/admin/test").then(res => {
+          currentUser.selectTest.map(selectItem =>
+            res.data.map(
+              testItem =>
+                selectItem === testItem._id ? currentTests.push(testItem) : false
+            )
+          );
+          this.setState({
+            tests: currentTests
+          });
+        });
+      }else{
+        var testsNew = []
+        currentUser.selectTest.map(testId => {
+          testsNew.push(JSON.parse(localStorage.getItem("tests")).filter(item => item._id.includes(testId)))
+        })
+        var tests= []
+        testsNew.map(item => (
+          tests.push(item[0])
+        ))
+        this.setState({ tests });
+      }
     }
   }
 
@@ -39,7 +55,7 @@ export default class Create extends Component {
         if (tests[i]._id === saveTarget.dataset.name) tests.splice(i, 1);
       }
 
-      axios.delete("https://server.dotaznik.hardart.cz/admin/test/delete/" + saveTarget.dataset.name);
+      axios.delete("http://localhost:4000/admin/test/delete/" + saveTarget.dataset.name);
     }, function () {
         console.log('Rejected.')
     }).then(() => {

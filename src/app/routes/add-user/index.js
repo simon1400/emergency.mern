@@ -35,7 +35,7 @@ export default class Create extends Component {
   }
 
   loadData = id => {
-    axios.get("https://server.dotaznik.hardart.cz/admin/user/" + id).then(res =>
+    axios.get("http://localhost:4000/admin/user/" + id).then(res =>
       this.setState({
         name: res.data.name,
         surname: res.data.surname,
@@ -47,6 +47,8 @@ export default class Create extends Component {
   };
 
   handleChange = e => {
+    console.log(e.target.value);
+    console.log(e.target.name);
     this.setState({ [e.target.name]: e.target.value });
   };
 
@@ -65,18 +67,13 @@ export default class Create extends Component {
   onSubmit = e => {
     e.preventDefault();
     if (this.props.match.params.id) {
-      axios
-        .post(
-          "https://server.dotaznik.hardart.cz/admin/user/update/" +
-            this.props.match.params.id,
-          this.state
-        )
+      axios.post("http://localhost:4000/admin/user/update/" + this.props.match.params.id, this.state)
         .then(res => {
           window.location.href = "/list/all/" + this.state.typeUser;
         });
     } else {
       axios
-        .post("https://server.dotaznik.hardart.cz/admin/user/create", this.state)
+        .post("http://localhost:4000/admin/user/create", this.state)
         .then(res => {
           window.location.href = "/list/all/" + this.state.typeUser;
         });
@@ -167,10 +164,7 @@ export default class Create extends Component {
                 ""
               )}
 
-              <button
-                className="uk-button uk-button-primary"
-                onClick={this.onSubmit}
-              >
+              <button className="uk-button uk-button-primary" onClick={this.onSubmit}>
                 Save
               </button>
             </form>

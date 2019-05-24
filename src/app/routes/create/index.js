@@ -29,7 +29,7 @@ export default class Create extends Component {
 
   componentDidMount() {
     if (this.props.match.params.id) {
-      axios.get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
+      axios.get("http://localhost:4000/admin/test/" + this.props.match.params.id)
         .then(res => {
           this.setState({
             ...res.data
@@ -47,6 +47,9 @@ export default class Create extends Component {
         questions
       });
     } else if (["nameQuestion", "descriptionQuestion", "typeQuestion"].includes(e.target.name)) {
+      if(e.target.name === 'typeQuestion'){
+        questions[e.target.dataset.countquestion].asks = questions[e.target.dataset.countquestion].asks.slice(0, 1)
+      }
       questions[e.target.dataset.countquestion][e.target.name] = e.target.value;
       this.setState({
         validQuestName: false,
@@ -221,10 +224,10 @@ export default class Create extends Component {
     })
 
     if (this.props.match.params.id) {
-      axios.post("https://server.dotaznik.hardart.cz/admin/test/update/" + this.props.match.params.id, this.state)
+      axios.post("http://localhost:4000/admin/test/update/" + this.props.match.params.id, this.state)
         .then(res => window.location.href = "/tests/admin");
     } else {
-      axios.post("https://server.dotaznik.hardart.cz/admin/test/create", this.state)
+      axios.post("http://localhost:4000/admin/test/create", this.state)
         .then(res => {
           window.location.href = "/tests/admin"
         });

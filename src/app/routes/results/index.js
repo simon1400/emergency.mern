@@ -14,31 +14,67 @@ export default class Results extends Component {
 
   componentDidMount() {
     if(this.props.match.params.id){
-      var tests = JSON.parse(localStorage.getItem('results')).filter(item => item.userId.includes(this.props.match.params.id));
-      this.setState({ tests });
+      if(navigator.onLine){
+        axios.get("http://localhost:4000/result/").then(res => {
+          this.setState({
+            tests: res.data.filter(item => item.userId.includes(this.props.match.params.id))
+          });
+        });
+      }else{
+        var tests = JSON.parse(localStorage.getItem('results')).filter(item => item.userId.includes(this.props.match.params.id));
+        this.setState({ tests });
+      }
     }else{
       var currentUser = JSON.parse(localStorage.getItem("user"));
-      var tests = JSON.parse(localStorage.getItem('results')).filter(item => item.userId.includes(currentUser._id));
-      this.setState({ tests });
+      if(navigator.onLine){
+        axios.get("http://localhost:4000/result/").then(res => {
+          this.setState({
+            tests: res.data.filter(item => item.userId.includes(currentUser._id))
+          });
+        });
+      }else{
+        var tests = JSON.parse(localStorage.getItem('results')).filter(item => item.userId.includes(currentUser._id));
+        this.setState({ tests });
+      }
     }
   }
 
   onExport = (e) => {
     e.preventDefault();
-    var result = JSON.parse(localStorage.getItem('results')).filter(item => item.userId.includes(e.currentTarget.id));
-    var user = JSON.parse(localStorage.getItem('users')).filter(item => item._id.includes(result.userId));
-    let xmlData = {
-      "Name pacient": user.name,
-      "Surname pacient": user.surname,
-      "ID number": user.rodneCislo,
-      "Name test": result.nameTest,
-      "Date": result.date
+    if(navigator.onLine){
+      axios.get("http://localhost:4000/result/" + e.currentTarget.id)
+          .then(res => axios.get("http://localhost:4000/admin/user/" + res.data.userId)
+                            .then(newRes => {
+                              let xmlData = {
+                                "Name pacient": newRes.data.name,
+                                "Surname pacient": newRes.data.surname,
+                                "ID number": newRes.data.rodneCislo,
+                                "Name test": res.data.nameTest,
+                                "Date": res.data.date
+                              }
+                              res.data.answers.map(item => (
+                                xmlData[item.nameAsk] = item.checkedValue
+                              ))
+                              var xls = new XlsExport([xmlData]);
+                              xls.exportToXLS('dotaznik.xls')
+                            })
+        );
+    }else{
+      var result = JSON.parse(localStorage.getItem('results')).filter(item => item.userId.includes(e.currentTarget.id));
+      var user = JSON.parse(localStorage.getItem('users')).filter(item => item._id.includes(result.userId));
+      let xmlData = {
+        "Name pacient": user.name,
+        "Surname pacient": user.surname,
+        "ID number": user.rodneCislo,
+        "Name test": result.nameTest,
+        "Date": result.date
+      }
+      result.answers.map(item => (
+        xmlData[item.nameAsk] = item.checkedValue
+      ))
+      var xls = new XlsExport([xmlData]);
+      xls.exportToXLS('dotaznik.xls')
     }
-    result.answers.map(item => (
-      xmlData[item.nameAsk] = item.checkedValue
-    ))
-    var xls = new XlsExport([xmlData]);
-    xls.exportToXLS('dotaznik.xls')
   }
 
   onDelete = e => {
@@ -53,7 +89,7 @@ export default class Results extends Component {
       }
 
       if(navigator.onLine){
-        axios.delete("https://server.dotaznik.hardart.cz/result/delete/" + saveTarget.dataset.name);
+        axios.delete("http://localhost:4000/result/delete/" + saveTarget.dataset.name);
       }else{
         let results = JSON.parse(localStorage.getItem('results'))
         let result = results.filter(item => item._id.includes(saveTarget.dataset.name))
@@ -100,7 +136,7 @@ export default class Results extends Component {
                                   </span>
                                 </p>
                               : <div className="uk-text-right">
-                                  <p className="uk-article-meta uk-text-warning uk-margin-remove-bottom">Pokracovat</p>
+                                  <p className="uk-article-meta uk-text-warning uk-margin-remove-bottom">Continue</p>
                                 </div>}
                           </div>
                         </div>
@@ -109,9 +145,9 @@ export default class Results extends Component {
                           ? <ul className="uk-iconnav uk-modal-close-default">
                               <li><span onClick={this.onExport} id={item._id} uk-icon="icon: cloud-download"></span></li>
                               <li><span onClick={this.onDelete} data-name={item._id} uk-icon="icon: trash"></span></li>
-                              <li><Link to={`/tests/pacient/edit/${item.idTest}`} uk-icon="icon: file-edit"></Link></li>
+                              {navigator.onLine && item.done ? <li><Link to={`/tests/pacient/edit/${item.idTest}/${item._id}`} uk-icon="icon: file-edit"></Link></li> : ''}
                             </ul>
-                          : navigator.onLine ? <ul className="uk-iconnav uk-modal-close-default">
+                          : navigator.onLine && item.done ? <ul className="uk-iconnav uk-modal-close-default">
                                 <li><Link to={`/tests/pacient/edit/${item.idTest}/${item._id}`} uk-icon="icon: file-edit"></Link></li>
                             </ul> : ''}
                       </Link>

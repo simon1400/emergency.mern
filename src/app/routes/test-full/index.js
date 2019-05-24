@@ -24,15 +24,39 @@ export default class TestFull extends Component {
   componentDidMount() {
     let currentUser = JSON.parse(localStorage.getItem("user"));
     console.log('update');
-    let test = JSON.parse(localStorage.getItem('tests')).filter(item => item._id.includes(this.props.match.params.id))[0]
-    let results = JSON.parse(localStorage.getItem('results')).filter(item => item.idTest.includes(this.props.match.params.id))
-    this.setState({
-      test,
-      userId: currentUser._id,
-      id: this.makeid(12)
-    }, () => {
-      this.getResult(results, currentUser)
-    })
+    if(navigator.onLine){
+      axios.get("http://localhost:4000/admin/test/" + this.props.match.params.id)
+        .then(res => this.setState({
+          test: res.data
+        })
+      );
+
+      axios.get("http://localhost:4000/result/all/" + this.props.match.params.id)
+        .then(res => res.data
+          ? (this.setState({
+              userId: currentUser._id,
+              resultId: "",
+              currentAsk: 0,
+              answers: [],
+              checkedName: "",
+              checkedBody: "",
+              date: "",
+              done: false
+            }),
+            this.getResult(res.data, currentUser))
+          : false
+        );
+    }else if(!navigator.onLine){
+      let test = JSON.parse(localStorage.getItem('tests')).filter(item => item._id.includes(this.props.match.params.id))[0]
+      let results = JSON.parse(localStorage.getItem('results')).filter(item => item.idTest.includes(this.props.match.params.id))
+      this.setState({
+        test,
+        userId: currentUser._id,
+        id: this.makeid(12)
+      }, () => {
+        this.getResult(results, currentUser)
+      })
+    }
   }
 
   getResult = (resData, currentUser) => {
@@ -122,51 +146,63 @@ export default class TestFull extends Component {
     console.log('next');
 
     if (!this.state.prev && !this.state.resultId) {
-      var results = JSON.parse(localStorage.getItem('results')).filter(item => item.idTest.includes(this.props.match.params.id));
-      if(results){
-        console.log(results);
-        this.getResult(results, currentUser)
+      if(navigator.onLine){
+        await axios.get("http://localhost:4000/result/all/" + this.props.match.params.id)
+          .then(res => (res.data ? this.getResult(res.data, currentUser) : false));
+      }else{
+        var results = JSON.parse(localStorage.getItem('results')).filter(item => item.idTest.includes(this.props.match.params.id));
+        if(results){
+          this.getResult(results, currentUser)
+        }
       }
     }
 
     await this.updateAnswers("next");
 
-    console.log(this.state);
     var data = this.sendObjectData(this.state, false);
 
     var url = this.props.match.url.split('/')
     url.shift()
 
-    // console.log(this.state.currentAsk);
-    // console.log(this.state.resultId);
-    // console.log(url[2]);
-
     if (this.state.currentAsk === 1 && !this.state.resultId && url[2] !== 'edit') {
-      let results = JSON.parse(localStorage.getItem('results'))
-      results.push(data)
-      localStorage.setItem('results', JSON.stringify(results))
+      if(navigator.onLine){
+        await axios.post("http://localhost:4000/result/create/", data)
+                  .then(res => console.log("create data next!"));
+      }else{
+        let results = JSON.parse(localStorage.getItem('results'))
+        results.push(data)
+        localStorage.setItem('results', JSON.stringify(results))
+      }
     }
 
-    console.log(this.state.currentAsk);
-    console.log(this.state.resultId);
     if (this.state.currentAsk && this.state.resultId) {
-      let results = JSON.parse(localStorage.getItem('results'))
-      let result = results.filter(item => item._id.includes(this.state.resultId))
+      if(navigator.onLine){
+        await axios.get("http://localhost:4000/result/" + this.state.resultId)
+                .then(res => {
+                  var data = res.data[0];
+                  if (data && !data.done) {
+                    this.setState({
+                      resultId: data._id,
+                      currentAsk: data.currentAsk,
+                      idTest: data.idTest,
+                      answers: data.answers
+                    });
+                  }
+                }).then(() => axios.post("http://localhost:4000/result/update/" + this.state.resultId, data));
+      }else{
+        let results = JSON.parse(localStorage.getItem('results'))
+        let result = results.filter(item => item._id.includes(this.state.resultId))
 
-      if(results.find(item => item._id === this.state.resultId)){
-        let index = results.findIndex(item => item._id === this.state.resultId);
-        results[index] = data;
-        localStorage.setItem('results', JSON.stringify(results))
+        if(results.find(item => item._id === this.state.resultId)){
+          let index = results.findIndex(item => item._id === this.state.resultId);
+          results[index] = data;
+          localStorage.setItem('results', JSON.stringify(results))
+        }
       }
     }
   };
 
   onNextEmpty = e => {
-
-
-    console.log(this.state.currentAsk);
-    console.log(this.state.answers[this.state.currentAsk].checkedValue);
-    console.log(this.state.answers[this.state.currentAsk].checkedBody);
 
     let answers = this.onCheckedAnswers(this.state.answers[this.state.currentAsk].checkedValue, this.state.answers[this.state.currentAsk].checkedBody);
 
@@ -179,22 +215,40 @@ export default class TestFull extends Component {
   }
 
   onFinish = async () => {
-    if(this.state.changeInput){
-      await this.updateAnswers("finish");
-    }else{
-      await this.updateAnswers("finishEmpty");
-    }
 
-    var data = this.sendObjectData(this.state, true);
+      if(this.state.changeInput){
+        await this.updateAnswers("finish");
+      }else{
+        await this.updateAnswers("finishEmpty");
+      }
 
-    let results = JSON.parse(localStorage.getItem('results'))
-    let result = results.filter(item => item._id.includes(this.state.resultId))
-    if(results.find(item => item._id === this.state.resultId)){
-      let index = results.findIndex(item => item._id === this.state.resultId);
-      results[index] = data;
-      localStorage.setItem('results', JSON.stringify(results))
-      window.location.href = '/results/pacient'
-    }
+      var data = this.sendObjectData(this.state, true);
+
+      if(navigator.onLine){
+        await axios.get("http://localhost:4000/result/all/" + this.props.match.params.id)
+                  .then(res => res.data
+                    ? res.data.map(item => !item.done && data.userId === item.userId
+                      ? (this.setState({
+                          resultId: item._id,
+                          currentAsk: item.currentAsk,
+                          idTest: item.idTest,
+                          answers: item.answers
+                        }),
+                        axios.post("http://localhost:4000/result/update/" + item._id, data)
+                          .then(() => window.location.href = "/results/pacient"))
+                      : false
+                    ) : false
+                  );
+      }else{
+        let results = JSON.parse(localStorage.getItem('results'))
+        let result = results.filter(item => item._id.includes(this.state.resultId))
+        if(results.find(item => item._id === this.state.resultId)){
+          let index = results.findIndex(item => item._id === this.state.resultId);
+          results[index] = data;
+          localStorage.setItem('results', JSON.stringify(results))
+          window.location.href = '/results/pacient'
+        }
+      }
 
   };
 
@@ -210,7 +264,10 @@ export default class TestFull extends Component {
       dateUpdate: state.dateUpdate
     };
 
-    data._id = state.id;
+    if(!navigator.onLine){
+      data._id = state.id;
+    }
+
 
     return data;
   };

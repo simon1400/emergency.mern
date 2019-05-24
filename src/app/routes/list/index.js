@@ -16,7 +16,7 @@ export default class Create extends Component {
     let currentUser = JSON.parse(localStorage.getItem("user"));
     axios
       .get(
-        "https://server.dotaznik.hardart.cz/admin/user/all/" + this.props.match.params.user
+        "http://localhost:4000/admin/user/all/" + this.props.match.params.user
       )
       .then(res => {
         if (this.props.match.params.user === "pacient") {
@@ -40,13 +40,13 @@ export default class Create extends Component {
     var saveTarget = e.currentTarget;
      e.currentTarget.blur();
      let users = this.state.users;
-     window.UIkit.modal.confirm('Opravdu smazat uzivatele?').then(function () {
+     window.UIkit.modal.confirm('Do you really to delete this patient?').then(function () {
 
        for (var i = 0; i < users.length; i++) {
          if (users[i]._id === saveTarget.name) users.splice(i, 1);
        }
 
-       axios.delete("https://server.dotaznik.hardart.cz/admin/user/delete/" + saveTarget.name);
+       axios.delete("http://localhost:4000/admin/user/delete/" + saveTarget.name);
      }, function () {
          console.log('Rejected.')
      }).then(() => {
