@@ -4,40 +4,27 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 export default class Create extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tests: []
-    };
-  }
+
+  state = {
+    tests: []
+  };
 
   componentDidMount() {
+    let currentUser = JSON.parse(localStorage.getItem("user"));
     if (this.props.match.params.user === "admin" || this.props.match.params.user === "doctor") {
-      axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
-        this.setState({
-          tests: res.data
-        });
+      this.setState({
+        tests: JSON.parse(localStorage.getItem("tests"))
       });
     } else if (this.props.match.params.user === "pacient") {
-      if(navigator.onLine){
-        let currentUser = JSON.parse(localStorage.getItem("user"));
-        var currentTests = [];
-        axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
-          currentUser.selectTest.map(selectItem =>
-            res.data.map(
-              testItem =>
-                selectItem === testItem._id ? currentTests.push(testItem) : false
-            )
-          );
-          this.setState({
-            tests: currentTests
-          });
-        });
-      }else{
-        this.setState({
-          tests: JSON.parse(localStorage.getItem("tests"))
-        });
-      }
+      var testsNew = []
+      currentUser.selectTest.map(testId => {
+        testsNew.push(JSON.parse(localStorage.getItem("tests")).filter(item => item._id.includes(testId)))
+      })
+      var tests= []
+      testsNew.map(item => (
+        tests.push(item[0])
+      ))
+      this.setState({ tests });
     }
   }
 

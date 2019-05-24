@@ -14,67 +14,31 @@ export default class Results extends Component {
 
   componentDidMount() {
     if(this.props.match.params.id){
-      if(navigator.onLine){
-        axios.get("https://server.dotaznik.hardart.cz/result/").then(res => {
-          this.setState({
-            tests: res.data.filter(item => item.userId.includes(this.props.match.params.id))
-          });
-        });
-      }else{
-        var tests = JSON.parse(localStorage.getItem('results')).filter(item => item.userId.includes(this.props.match.params.id));
-        this.setState({ tests });
-      }
+      var tests = JSON.parse(localStorage.getItem('results')).filter(item => item.userId.includes(this.props.match.params.id));
+      this.setState({ tests });
     }else{
       var currentUser = JSON.parse(localStorage.getItem("user"));
-      if(navigator.onLine){
-        axios.get("https://server.dotaznik.hardart.cz/result/").then(res => {
-          this.setState({
-            tests: res.data.filter(item => item.userId.includes(currentUser._id))
-          });
-        });
-      }else{
-        var tests = JSON.parse(localStorage.getItem('results')).filter(item => item.userId.includes(currentUser._id));
-        this.setState({ tests });
-      }
+      var tests = JSON.parse(localStorage.getItem('results')).filter(item => item.userId.includes(currentUser._id));
+      this.setState({ tests });
     }
   }
 
   onExport = (e) => {
     e.preventDefault();
-    if(navigator.onLine){
-      axios.get("https://server.dotaznik.hardart.cz/result/" + e.currentTarget.id)
-          .then(res => axios.get("https://server.dotaznik.hardart.cz/admin/user/" + res.data.userId)
-                            .then(newRes => {
-                              let xmlData = {
-                                "Name pacient": newRes.data.name,
-                                "Surname pacient": newRes.data.surname,
-                                "ID number": newRes.data.rodneCislo,
-                                "Name test": res.data.nameTest,
-                                "Date": res.data.date
-                              }
-                              res.data.answers.map(item => (
-                                xmlData[item.nameAsk] = item.checkedValue
-                              ))
-                              var xls = new XlsExport([xmlData]);
-                              xls.exportToXLS('dotaznik.xls')
-                            })
-        );
-    }else{
-      var result = JSON.parse(localStorage.getItem('results')).filter(item => item.userId.includes(e.currentTarget.id));
-      var user = JSON.parse(localStorage.getItem('users')).filter(item => item._id.includes(result.userId));
-      let xmlData = {
-        "Name pacient": user.name,
-        "Surname pacient": user.surname,
-        "ID number": user.rodneCislo,
-        "Name test": result.nameTest,
-        "Date": result.date
-      }
-      result.answers.map(item => (
-        xmlData[item.nameAsk] = item.checkedValue
-      ))
-      var xls = new XlsExport([xmlData]);
-      xls.exportToXLS('dotaznik.xls')
+    var result = JSON.parse(localStorage.getItem('results')).filter(item => item.userId.includes(e.currentTarget.id));
+    var user = JSON.parse(localStorage.getItem('users')).filter(item => item._id.includes(result.userId));
+    let xmlData = {
+      "Name pacient": user.name,
+      "Surname pacient": user.surname,
+      "ID number": user.rodneCislo,
+      "Name test": result.nameTest,
+      "Date": result.date
     }
+    result.answers.map(item => (
+      xmlData[item.nameAsk] = item.checkedValue
+    ))
+    var xls = new XlsExport([xmlData]);
+    xls.exportToXLS('dotaznik.xls')
   }
 
   onDelete = e => {
@@ -147,9 +111,9 @@ export default class Results extends Component {
                               <li><span onClick={this.onDelete} data-name={item._id} uk-icon="icon: trash"></span></li>
                               <li><Link to={`/tests/pacient/edit/${item.idTest}`} uk-icon="icon: file-edit"></Link></li>
                             </ul>
-                          : <ul className="uk-iconnav uk-modal-close-default">
-                              <li><Link to={`/tests/pacient/edit/${item.idTest}/${item._id}`} uk-icon="icon: file-edit"></Link></li>
-                            </ul>}
+                          : navigator.onLine ? <ul className="uk-iconnav uk-modal-close-default">
+                                <li><Link to={`/tests/pacient/edit/${item.idTest}/${item._id}`} uk-icon="icon: file-edit"></Link></li>
+                            </ul> : ''}
                       </Link>
                     </div>
                   ))

@@ -3,6 +3,7 @@ import Page from "../../components/page";
 import axios from "axios";
 
 
+
 export default class TestFull extends Component {
   state = {
     resultId: "",
@@ -23,34 +24,15 @@ export default class TestFull extends Component {
   componentDidMount() {
     let currentUser = JSON.parse(localStorage.getItem("user"));
     console.log('update');
-    if(navigator.onLine){
-      axios.get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
-        .then(res => this.setState({
-          test: res.data
-        })
-      );
-
-      axios.get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
-        .then(res => res.data
-          ? (this.setState({
-              userId: currentUser._id,
-              resultId: "",
-              currentAsk: 0,
-              answers: [],
-              checkedName: "",
-              checkedBody: "",
-              date: "",
-              done: false
-            }),
-            this.getResult(res.data, currentUser))
-          : false
-        );
-    }else if(!navigator.onLine){
-      let test = JSON.parse(localStorage.getItem('tests')).filter(item => item._id.includes(this.props.match.params.id))
-      let results = JSON.parse(localStorage.getItem('results')).filter(item => item.idTest.includes(this.props.match.params.id))
+    let test = JSON.parse(localStorage.getItem('tests')).filter(item => item._id.includes(this.props.match.params.id))[0]
+    let results = JSON.parse(localStorage.getItem('results')).filter(item => item.idTest.includes(this.props.match.params.id))
+    this.setState({
+      test,
+      userId: currentUser._id,
+      id: this.makeid(12)
+    }, () => {
       this.getResult(results, currentUser)
-      this.setState({ test })
-    }
+    })
   }
 
   getResult = (resData, currentUser) => {
@@ -109,6 +91,7 @@ export default class TestFull extends Component {
     var date = now.getDate() + "." + now.getMonth() + "." + now.getFullYear() + " " + now.getHours() + ":" + now.getMinutes();
 
     if (e === "next") {
+      console.log(this.state.currentAsk);
       this.setState({
         currentAsk: this.state.currentAsk + 1,
         answers: answers,
@@ -120,7 +103,7 @@ export default class TestFull extends Component {
         answers: answers,
         date: date,
         dateUpdate: Date.now()
-      }, () => console.log(this.state));
+      });
     }
 
 
@@ -139,65 +122,41 @@ export default class TestFull extends Component {
     console.log('next');
 
     if (!this.state.prev && !this.state.resultId) {
-      if(navigator.onLine){
-        await axios.get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
-          .then(res => (res.data ? this.getResult(res.data, currentUser) : false));
-      }else{
-        var results = JSON.parse(localStorage.getItem('results')).filter(item => item.idTest.includes(this.props.match.params.id));
-        if(results){
-          this.getResult(results, currentUser)
-        }
+      var results = JSON.parse(localStorage.getItem('results')).filter(item => item.idTest.includes(this.props.match.params.id));
+      if(results){
+        console.log(results);
+        this.getResult(results, currentUser)
       }
     }
 
     await this.updateAnswers("next");
 
+    console.log(this.state);
     var data = this.sendObjectData(this.state, false);
 
     var url = this.props.match.url.split('/')
     url.shift()
 
+    // console.log(this.state.currentAsk);
+    // console.log(this.state.resultId);
+    // console.log(url[2]);
+
     if (this.state.currentAsk === 1 && !this.state.resultId && url[2] !== 'edit') {
-      if(navigator.onLine){
-        await axios.post("https://server.dotaznik.hardart.cz/result/create/", data)
-                  .then(res => console.log("create data next!"));
-      }else{
-        let results = JSON.parse(localStorage.getItem('results'))
-        results.push(data)
-        localStorage.setItem('results', JSON.stringify(results))
-      }
+      let results = JSON.parse(localStorage.getItem('results'))
+      results.push(data)
+      localStorage.setItem('results', JSON.stringify(results))
     }
 
+    console.log(this.state.currentAsk);
+    console.log(this.state.resultId);
     if (this.state.currentAsk && this.state.resultId) {
-      if(navigator.onLine){
-        await axios.get("https://server.dotaznik.hardart.cz/result/" + this.state.resultId)
-                .then(res => {
-                  var data = res.data[0];
-                  if (data && !data.done) {
-                    this.setState({
-                      resultId: data._id,
-                      currentAsk: data.currentAsk,
-                      idTest: data.idTest,
-                      answers: data.answers
-                    });
-                  }
-                }).then(() => axios.post("https://server.dotaznik.hardart.cz/result/update/" + this.state.resultId, data));
-      }else{
-        let results = JSON.parse(localStorage.getItem('results'))
-        let result = results.filter(item => item._id.includes(this.state.resultId))
-        if (result && !result.done) {
-          this.setState({
-            resultId: result._id,
-            currentAsk: result.currentAsk,
-            idTest: result.idTest,
-            answers: result.answers
-          });
-        }
-        if(results.find(item => item._id === this.state.resultId)){
-          let index = results.findIndex(item => item._id === this.state.resultId);
-          results[index] = data;
-          localStorage.setItem('results', JSON.stringify(results))
-        }
+      let results = JSON.parse(localStorage.getItem('results'))
+      let result = results.filter(item => item._id.includes(this.state.resultId))
+
+      if(results.find(item => item._id === this.state.resultId)){
+        let index = results.findIndex(item => item._id === this.state.resultId);
+        results[index] = data;
+        localStorage.setItem('results', JSON.stringify(results))
       }
     }
   };
@@ -228,38 +187,15 @@ export default class TestFull extends Component {
 
     var data = this.sendObjectData(this.state, true);
 
-    if(navigator.onLine){
-      await axios.get("https://server.dotaznik.hardart.cz/result/all/" + this.props.match.params.id)
-                .then(res => res.data
-                  ? res.data.map(item => !item.done && data.userId === item.userId
-                    ? (this.setState({
-                        resultId: item._id,
-                        currentAsk: item.currentAsk,
-                        idTest: item.idTest,
-                        answers: item.answers
-                      }),
-                      axios.post("https://server.dotaznik.hardart.cz/result/update/" + item._id, data)
-                        .then(() => window.location.href = "/results/pacient"))
-                    : false
-                  ) : false
-                );
-    }else{
-      let results = JSON.parse(localStorage.getItem('results'))
-      let result = results.filter(item => item._id.includes(this.state.resultId))
-      if (result && !result.done) {
-        this.setState({
-          resultId: result._id,
-          currentAsk: result.currentAsk,
-          idTest: result.idTest,
-          answers: result.answers
-        });
-      }
-      if(results.find(item => item._id === this.state.resultId)){
-        let index = results.findIndex(item => item._id === this.state.resultId);
-        results[index] = data;
-        localStorage.setItem('results', JSON.stringify(results))
-      }
+    let results = JSON.parse(localStorage.getItem('results'))
+    let result = results.filter(item => item._id.includes(this.state.resultId))
+    if(results.find(item => item._id === this.state.resultId)){
+      let index = results.findIndex(item => item._id === this.state.resultId);
+      results[index] = data;
+      localStorage.setItem('results', JSON.stringify(results))
+      window.location.href = '/results/pacient'
     }
+
   };
 
   sendObjectData = (state, done) => {
@@ -273,6 +209,8 @@ export default class TestFull extends Component {
       userId: state.userId,
       dateUpdate: state.dateUpdate
     };
+
+    data._id = state.id;
 
     return data;
   };
@@ -325,6 +263,16 @@ export default class TestFull extends Component {
     })
   }
 
+  makeid = length => {
+     var result           = '';
+     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+     var charactersLength = characters.length;
+     for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+     }
+     return result;
+  }
+
   render() {
     var test = this.state.test;
     var currentAsk = this.state.currentAsk;
@@ -350,7 +298,7 @@ export default class TestFull extends Component {
 
               <form>
                 <div className="uk-margin uk-grid-small uk-child-width-1-1 uk-grid">
-                  {Object.entries(test).length
+                  {Object.keys(test).length
                     ? test.questions[currentAsk].asks.map((ask, indexAsk) => (
                       test.questions[currentAsk].typeQuestion === 'radio'
                         ? <label key={indexAsk}>

@@ -12,36 +12,21 @@ export default class TestFull extends Component {
 
   componentDidMount() {
     if(this.props.match.params.type){
-      if(navigator.onLine){
-        axios.get("https://server.dotaznik.hardart.cz/admin/test/" + this.props.match.params.id)
-          .then(res => {
-            this.setState({
-              test: res.data
-            });
-          });
-      }else{
-        this.setState({
-          test: JSON.parse(localStorage.getItem("tests")).filter(item => item._id.includes(this.props.match.params.id))
-        });
-      }
+      this.setState({
+        test: JSON.parse(localStorage.getItem("tests")).filter(item => item._id.includes(this.props.match.params.id))
+      });
     }else{
-      if(navigator.onLine){
-        axios.get("https://server.dotaznik.hardart.cz/result/" + this.props.match.params.id)
-          .then(res => {
-            this.setState({
-              test: res.data
-            });
-          });
-      }else{
-        this.setState({
-          test: JSON.parse(localStorage.getItem("results")).filter(item => item._id.includes(this.props.match.params.id))
-        });
-      }
+      this.setState({
+        test: JSON.parse(localStorage.getItem("results")).filter(item => item._id.includes(this.props.match.params.id))
+      });
     }
   }
 
   render() {
     var test = this.state.test;
+    if(test.length){
+      test = test[0]
+    }
     console.log(test);
     var typeuser = this.props.match.params.type
     return (
