@@ -14,12 +14,14 @@ export default class Homepage extends Component {
       axios.get('https://server.dotaznik.hardart.cz/result').then(res => {
         let localResults = JSON.parse(localStorage.getItem('results'))
         let qual;
-        localResults.length ? localResults.map(itemLocal => {
-          qual = res.data.filter(item => item._id.includes(itemLocal._id))
-          if(!qual.length){
-            axios.post('https://server.dotaznik.hardart.cz/result/create', itemLocal)
-          }
-        }) : false
+        if(localResults){
+          localResults.map(itemLocal => {
+            qual = res.data.filter(item => item._id.includes(itemLocal._id))
+            if(!qual.length){
+              axios.post('https://server.dotaznik.hardart.cz/result/create', itemLocal)
+            }
+          })
+        }
         localStorage.setItem('results', JSON.stringify(res.data))
       })
       axios.get('https://server.dotaznik.hardart.cz/admin/user/all').then(res => {
