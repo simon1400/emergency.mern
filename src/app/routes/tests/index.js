@@ -55,7 +55,18 @@ export default class Create extends Component {
         if (tests[i]._id === saveTarget.dataset.name) tests.splice(i, 1);
       }
 
-      axios.delete("https://server.dotaznik.hardart.cz/admin/test/delete/" + saveTarget.dataset.name);
+      if(navigator.onLine){
+        axios.delete("https://server.dotaznik.hardart.cz/admin/test/delete/" + saveTarget.dataset.name);
+      }else{
+        let localTest = JSON.parse(localStorage.getItem("tests"));
+        localTest.map((item, index) => {
+          if(item._id === saveTarget.dataset.name){
+            localTest = localTest.splice(index, 1);
+            localStorage.setItem('tests', JSON.stringify(localTest))
+          }
+        })
+      }
+
     }, function () {
         console.log('Rejected.')
     }).then(() => {
