@@ -72,13 +72,13 @@ export const logoutUser = () => dispatch =>
       authenticated: false
     });
 
-    localStorage.clear();
+    window.location.href = '/'
 
     dispatch({
       type: SET_CURRENT_USER,
       user: {}
     });
 
-    localStorage.removeItem("user");
+
     resolve({});
   });

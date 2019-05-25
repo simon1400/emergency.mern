@@ -73,7 +73,9 @@ class Header extends Component {
   }
 
   onLogout = () => {
-    this.props.logoutUser();
+    this.props.logoutUser().then(() => {
+      localStorage.clear();
+    });
   };
 
   shouldComponentUpdate(nextProps) {
