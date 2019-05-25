@@ -14,10 +14,13 @@ export default class Homepage extends Component {
       axios.get('https://server.dotaznik.hardart.cz/result').then(res => {
         let localResults = JSON.parse(localStorage.getItem('results'))
         let qual;
+        console.log(localResults);
         if(localResults){
           localResults.map(itemLocal => {
             qual = res.data.filter(item => item._id.includes(itemLocal._id))
+            console.log(qual);
             if(!qual.length){
+              console.log('create');
               axios.post('https://server.dotaznik.hardart.cz/result/create', itemLocal)
             }
           })

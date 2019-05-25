@@ -72,6 +72,8 @@ export const logoutUser = () => dispatch =>
       authenticated: false
     });
 
+    localStorage.clear();
+
     dispatch({
       type: SET_CURRENT_USER,
       user: {}

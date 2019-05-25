@@ -13,6 +13,7 @@ export default class Results extends Component {
   };
 
   componentDidMount() {
+    console.log('update results');
     if(this.props.match.params.id){
       if(navigator.onLine){
         axios.get("https://server.dotaznik.hardart.cz/result/").then(res => {
@@ -88,17 +89,20 @@ export default class Results extends Component {
         if (tests[i]._id === saveTarget.dataset.name) tests.splice(i, 1);
       }
 
+      let results = JSON.parse(localStorage.getItem("results"));
+      results.map((item, index) => {
+        if(item._id === saveTarget.dataset.name){
+          results.splice(index, 1);
+          localStorage.setItem('results', JSON.stringify(results))
+        }
+      })
+
       if(navigator.onLine){
         axios.delete("https://server.dotaznik.hardart.cz/result/delete/" + saveTarget.dataset.name);
       }
 
-      let results = JSON.parse(localStorage.getItem("results"));
-      results.map((item, index) => {
-        if(item._id === saveTarget.dataset.name){
-          results = results.splice(index, 1);
-          localStorage.setItem('results', JSON.stringify(results))
-        }
-      })
+
+
 
     }, () => console.log('Rejected.'))
     .then(() => {
