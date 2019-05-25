@@ -91,14 +91,15 @@ export default class Results extends Component {
       if(navigator.onLine){
         axios.delete("https://server.dotaznik.hardart.cz/result/delete/" + saveTarget.dataset.name);
       }
-      
-      let results = JSON.parse(localStorage.getItem('results'))
-      let result = results.filter(item => item._id.includes(saveTarget.dataset.name))
-      if(results.find(item => item._id === this.state.resultId)){
-        let index = results.findIndex(item => item._id === this.state.resultId);
-        results = results.splice(index, 1);
-        localStorage.setItem('results', JSON.stringify(results))
-      }
+
+      let results = JSON.parse(localStorage.getItem("results"));
+      results.map((item, index) => {
+        if(item._id === saveTarget.dataset.name){
+          results = results.splice(index, 1);
+          localStorage.setItem('results', JSON.stringify(results))
+        }
+      })
+
     }, () => console.log('Rejected.'))
     .then(() => {
       this.setState({
