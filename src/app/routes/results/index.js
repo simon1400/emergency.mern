@@ -15,7 +15,7 @@ export default class Results extends Component {
   componentDidMount() {
     if(this.props.match.params.id){
       if(navigator.onLine){
-        axios.get("http://localhost:4000/result/").then(res => {
+        axios.get("https://server.dotaznik.hardart.cz/result/").then(res => {
           this.setState({
             tests: res.data.filter(item => item.userId.includes(this.props.match.params.id))
           });
@@ -27,7 +27,7 @@ export default class Results extends Component {
     }else{
       var currentUser = JSON.parse(localStorage.getItem("user"));
       if(navigator.onLine){
-        axios.get("http://localhost:4000/result/").then(res => {
+        axios.get("https://server.dotaznik.hardart.cz/result/").then(res => {
           this.setState({
             tests: res.data.filter(item => item.userId.includes(currentUser._id))
           });
@@ -42,8 +42,8 @@ export default class Results extends Component {
   onExport = (e) => {
     e.preventDefault();
     if(navigator.onLine){
-      axios.get("http://localhost:4000/result/" + e.currentTarget.id)
-          .then(res => axios.get("http://localhost:4000/admin/user/" + res.data.userId)
+      axios.get("https://server.dotaznik.hardart.cz/result/" + e.currentTarget.id)
+          .then(res => axios.get("https://server.dotaznik.hardart.cz/admin/user/" + res.data.userId)
                             .then(newRes => {
                               let xmlData = {
                                 "Name pacient": newRes.data.name,
@@ -89,7 +89,7 @@ export default class Results extends Component {
       }
 
       if(navigator.onLine){
-        axios.delete("http://localhost:4000/result/delete/" + saveTarget.dataset.name);
+        axios.delete("https://server.dotaznik.hardart.cz/result/delete/" + saveTarget.dataset.name);
       }else{
         let results = JSON.parse(localStorage.getItem('results'))
         let result = results.filter(item => item._id.includes(saveTarget.dataset.name))

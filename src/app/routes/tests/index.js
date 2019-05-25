@@ -19,7 +19,7 @@ export default class Create extends Component {
       if(navigator.onLine){
         let currentUser = JSON.parse(localStorage.getItem("user"));
         var currentTests = [];
-        axios.get("http://localhost:4000/admin/test").then(res => {
+        axios.get("https://server.dotaznik.hardart.cz/admin/test").then(res => {
           currentUser.selectTest.map(selectItem =>
             res.data.map(
               testItem =>
@@ -55,7 +55,7 @@ export default class Create extends Component {
         if (tests[i]._id === saveTarget.dataset.name) tests.splice(i, 1);
       }
 
-      axios.delete("http://localhost:4000/admin/test/delete/" + saveTarget.dataset.name);
+      axios.delete("https://server.dotaznik.hardart.cz/admin/test/delete/" + saveTarget.dataset.name);
     }, function () {
         console.log('Rejected.')
     }).then(() => {
