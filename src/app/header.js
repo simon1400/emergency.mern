@@ -124,21 +124,12 @@ class Header extends Component {
                 <ul className="uk-navbar-nav">
                   <li>
                     <a href="/">
-                      <span
-                        className="uk-icon uk-margin-small-right"
-                        uk-icon="icon: user"
-                      />
+                      <span className="uk-icon uk-margin-small-right" uk-icon="icon: user"/>
                       {this.props.user.name + " " + this.props.user.surname}
                     </a>
                   </li>
                   <li>
-                    {this.props.isAuthenticated ? (
-                      <a nohref="" onClick={this.onLogout}>
-                        Log out
-                      </a>
-                    ) : (
-                      <a href="/">Sing In</a>
-                    )}
+                    {this.props.isAuthenticated ? navigator.onLine ? <a nohref="" onClick={this.onLogout}>Log out</a> : '' : <a href="/">Sing In</a>}
                   </li>
                 </ul>
               </div>
@@ -152,9 +143,7 @@ class Header extends Component {
                 <Link  to={link.to} title={link.text}><span uk-icon={`icon: ${link.icon}`}></span></Link>
               </li>
             ))}
-            <li>
-              {this.props.isAuthenticated ? <a nohref="" onClick={this.onLogout}><span uk-icon="icon: sign-out"></span></a> : ''}
-            </li>
+            {navigator.onLine ? <li>{this.props.isAuthenticated ? <a nohref="" onClick={this.onLogout}><span uk-icon="icon: sign-out"></span></a> : ''}</li> : ''}
           </ul>
         </div>
       </Fragment>

@@ -150,7 +150,6 @@ export default class Results extends Component {
                           ? <ul className="uk-iconnav uk-modal-close-default">
                               <li><span onClick={this.onExport} id={item._id} uk-icon="icon: cloud-download"></span></li>
                               <li><span onClick={this.onDelete} data-name={item._id} uk-icon="icon: trash"></span></li>
-                              {navigator.onLine && item.done ? <li><Link to={`/tests/pacient/edit/${item.idTest}/${item._id}`} uk-icon="icon: file-edit"></Link></li> : ''}
                             </ul>
                           : navigator.onLine && item.done ? <ul className="uk-iconnav uk-modal-close-default">
                                 <li><Link to={`/tests/pacient/edit/${item.idTest}/${item._id}`} uk-icon="icon: file-edit"></Link></li>
