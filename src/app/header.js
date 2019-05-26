@@ -130,9 +130,7 @@ class Header extends Component {
                       {this.props.user.name + " " + this.props.user.surname}
                     </a>
                   </li>
-                  <li>
-                    {this.props.isAuthenticated ? navigator.onLine ? <a nohref="" onClick={this.onLogout}>Log out</a> : '' : <a href="/">Sing In</a>}
-                  </li>
+                  {this.props.isAuthenticated && navigator.onLine ? <li><a nohref="" onClick={this.onLogout}>Log out</a></li> : ''}
                 </ul>
               </div>
             </div>
