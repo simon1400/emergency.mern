@@ -68,8 +68,13 @@ class Header extends Component {
           icon: 'home'
         }
       ],
-      user: {}
+      user: {},
+      showLogout: navigator.onLine
     };
+  }
+
+  monitorOnline = () => {
+    this.setState({showLogout:navigator.onLine})
   }
 
   onLogout = () => {
@@ -113,11 +118,10 @@ class Header extends Component {
                 <a className="uk-navbar-item uk-logo uk-preserve-color" href="/">
                   <img src={logo} alt="Logotype" />
                 </a>
-
                 <ul className="uk-navbar-nav uk-visible@m">
                   {menu.map((link, index) => (
                     <li key={index}>
-                      <Link  to={link.to}>{link.text}</Link>
+                      <Link to={link.to} onClick={this.monitorOnline}>{link.text}</Link>
                     </li>
                   ))}
                 </ul>
@@ -130,20 +134,20 @@ class Header extends Component {
                       {this.props.user.name + " " + this.props.user.surname}
                     </a>
                   </li>
-                  {this.props.isAuthenticated && navigator.onLine ? <li><a nohref="" onClick={this.onLogout}>Log out</a></li> : ''}
+                  {this.props.isAuthenticated && this.state.showLogout ? <li><a nohref="" onClick={this.onLogout}>Log out</a></li> : ''}
                 </ul>
               </div>
             </div>
           </div>
         </header>
-        <div className="controlPanel uk-hidden@m" >
+        <div className="controlPanel uk-hidden@m">
           <ul>
-            {menu.map((link, index) => (
+            {menu.map((link, index) =>
               <li key={index}>
-                <Link  to={link.to} title={link.text}><span uk-icon={`icon: ${link.icon}`}></span></Link>
+                <Link to={link.to} title={link.text} onClick={this.monitorOnline}><span uk-icon={`icon: ${link.icon}`}></span></Link>
               </li>
-            ))}
-            {navigator.onLine ? <li>{this.props.isAuthenticated ? <a nohref="" onClick={this.onLogout}><span uk-icon="icon: sign-out"></span></a> : ''}</li> : ''}
+            )}
+            {this.state.showLogout ? <li>{this.props.isAuthenticated ? <a nohref="" onClick={this.onLogout}><span uk-icon="icon: sign-out"></span></a> : ''}</li> : ''}
           </ul>
         </div>
       </Fragment>

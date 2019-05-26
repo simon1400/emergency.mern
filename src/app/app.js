@@ -21,6 +21,7 @@ const frontload = async props => {
 };
 
 class App extends Component {
+
   componentWillMount() {
     if (!isServer) {
       this.props.establishCurrentUser();
@@ -30,10 +31,7 @@ class App extends Component {
   render() {
     return (
       <div id="app">
-        <Header
-          isAuthenticated={this.props.isAuthenticated}
-          user={this.props.currentProfile}
-        />
+        <Header isAuthenticated={this.props.isAuthenticated} user={this.props.currentProfile}/>
         <Routes typeUser={this.props.currentProfile.typeUser} />
       </div>
     );
